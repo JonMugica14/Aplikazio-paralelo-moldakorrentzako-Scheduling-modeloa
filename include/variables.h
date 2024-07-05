@@ -2,7 +2,7 @@
 
 struct event
 {
-    int time;
+    int time_event;
     int num_cores;
 };
 
@@ -22,19 +22,19 @@ struct cores
     int id;
     struct job job;
     int busy;
-    int time;
+    int time_core;
 };
 
 extern struct cores *cores;
 extern int num_cores;
-extern int time;
+extern int Time;
 extern int free_cores;
 
 struct scheduler_events
 {
     struct job *jobs;
     int num_jobs;
-    int time;
+    int time_scheduler_event;
 };
 
 extern struct scheduler_events *scheduler_events;
