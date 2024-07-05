@@ -12,30 +12,28 @@ struct job
     int arrival_time;
     struct event *events;
     int num_events;
+    struct cores *cores;
+    int num_cores;
 };
 
 extern struct job *job_queue;
 extern int num_jobs;
+extern struct job *active_job;
+extern int num_active_jobs;
 
 struct cores
 {
     int id;
-    struct job job;
     int busy;
-    int time_core;
+    //int time_core;
+    //struct job job;
 };
 
 extern struct cores *cores;
-extern int num_cores;
-extern int Time;
+extern int num_active_cores;
+extern int max_cores;
+extern int denb;
 extern int free_cores;
 
-struct scheduler_events
-{
-    struct job *jobs;
-    int num_jobs;
-    int time_scheduler_event;
-};
-
-extern struct scheduler_events *scheduler_events;
-extern int num_scheduler_events;
+extern struct job *event_list;
+extern int num_event_list;
