@@ -25,7 +25,7 @@ int core()
 
 
 
-        
+     
     
     return 0;
 }

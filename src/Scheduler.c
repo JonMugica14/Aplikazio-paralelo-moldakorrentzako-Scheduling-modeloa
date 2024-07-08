@@ -7,48 +7,50 @@
 #include "../include/Scheduler.h"
 #include "../include/Cores.h"
 
-
 struct job *job;
 
 void free_job()
 {
-    for(int i = num_event_list - 1; i >= 0; i--)
+    for (int i = num_event_list - 1; i >= 0; i--)
     {
-        for(int j = 0; event_list[i].num_cores; j++)
+        for (int j = 0; event_list[i].num_cores; j++)
         {
             event_list[i].cores[j].busy = 0;
             free_cores++;
         }
-        
+
         int lag = 0;
-        for(int h = 0; i<num_active_jobs; i++)
+        for (int h = 0; i < num_active_jobs; i++)
         {
-            if(active_job[h].pid == event_list[i].pid)
+            if (active_job[h].pid == event_list[i].pid)
             {
                 lag++;
-                active_job[h] = active_job[h+1];
+                active_job[h] = active_job[h + 1];
             }
-            if(lag){
-                active_job[h] = active_job[h+1];
+            if (lag)
+            {
+                active_job[h] = active_job[h + 1];
             }
         }
     }
     num_event_list--;
 }
-
+int kontBar=0;
+int kontCore=0;
 int scheduler()
 {
     while (1)
     {
-        
+       
         if (num_jobs != 0 && job_queue[0].arrival_time == denb && job_queue[0].events[0].num_cores <= free_cores)
         {
-            denb=0;
+            printf("Job %d started\n", job_queue[0].pid);
+            denb = 0;
             int i = 0;
             int core = 0;
             active_job[num_active_jobs] = job_queue[0];
             job = &active_job[num_active_jobs];
-
+            printf("KontCore: %d\n",kontCore);
             while (core < job_queue[0].events[0].num_cores)
             {
                 if (cores[i].busy == 0)
@@ -60,13 +62,12 @@ int scheduler()
                 }
                 i++;
             }
-           for (int i = 0; i < job_queue[0].num_events; i++)
-           {
+            for (int i = 0; i < job_queue[0].num_events; i++)
+            {
                 job_queue[0].events[i] = job_queue[0].events[i + 1];
-           }
-           job_queue[0].num_events--;
-           
-            
+            }
+            job_queue[0].num_events--;
+
             num_active_jobs++;
 
             free_cores -= job_queue[0].events[0].num_cores;
@@ -77,24 +78,23 @@ int scheduler()
             }
 
             num_jobs--;
-    
+
             i = 0;
-
-
-
-            denb++;
+            kontCore++;
         }
-
-
-        if(num_jobs==0)
+        kontBar++;
+        denb++;
+       
+        if (num_jobs == 0)
         {
             printf("All jobs completed\n");
             break;
         }
 
-        //Chekear si hay algun evento nuevo en este ciclo
-        if(num_event_list > 0) free_job();
-
+        // Chekear si hay algun evento nuevo en este ciclo
+        if (num_event_list > 0)
+            free_job();
+    
         core();
     }
 }
