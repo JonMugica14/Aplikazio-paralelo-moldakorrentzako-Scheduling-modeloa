@@ -8,14 +8,24 @@
 
 int core()
 {
-    for(int i = 0; i < num_active_jobs; i++)
-    {
-        if(active_job[i].events[0].time_event == 0)
+   
+
+        for (int i = 0; i < num_active_jobs; i++)
         {
-            event_list[num_event_list] = active_job[i];
-            num_event_list++;
-        }else{
-            active_job[i].events[0].time_event--;
+            if (active_job[i].events[0].time_event == 0)
+            {
+                event_list[num_event_list] = active_job[i];
+                num_event_list++;
+            }
+            else
+            {
+                active_job[i].events[0].time_event--;
+            }
         }
-    }
+
+
+
+        
+    
+    return 0;
 }

@@ -1,1 +1,1 @@
-int cores();
+int core();

@@ -5,6 +5,7 @@
 #include <string.h>
 #include "../include/variables.h"
 #include "../include/Scheduler.h"
+#include "../include/Cores.h"
 
 
 struct job *job;
@@ -15,7 +16,7 @@ void free_job()
     {
         for(int j = 0; event_list[i].num_cores; j++)
         {
-            event_list[i].cores[j].busy == 0;
+            event_list[i].cores[j].busy = 0;
             free_cores++;
         }
         
@@ -59,6 +60,13 @@ int scheduler()
                 }
                 i++;
             }
+           for (int i = 0; i < job_queue[0].num_events; i++)
+           {
+                job_queue[0].events[i] = job_queue[0].events[i + 1];
+           }
+           job_queue[0].num_events--;
+           
+            
             num_active_jobs++;
 
             free_cores -= job_queue[0].events[0].num_cores;
@@ -86,6 +94,7 @@ int scheduler()
 
         //Chekear si hay algun evento nuevo en este ciclo
         if(num_event_list > 0) free_job();
-        
+
+        core();
     }
 }
