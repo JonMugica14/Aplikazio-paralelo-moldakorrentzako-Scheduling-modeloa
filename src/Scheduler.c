@@ -9,6 +9,32 @@
 
 struct job *job;
 
+void free_job()
+{
+    for(int i = num_event_list - 1; i >= 0; i--)
+    {
+        for(int j = 0; event_list[i].num_cores; j++)
+        {
+            event_list[i].cores[j].busy == 0;
+            free_cores++;
+        }
+        
+        int lag = 0;
+        for(int h = 0; i<num_active_jobs; i++)
+        {
+            if(active_job[h].pid == event_list[i].pid)
+            {
+                lag++;
+                active_job[h] = active_job[h+1];
+            }
+            if(lag){
+                active_job[h] = active_job[h+1];
+            }
+        }
+    }
+    num_event_list--;
+}
+
 int scheduler()
 {
     while (1)
@@ -47,14 +73,6 @@ int scheduler()
             i = 0;
 
 
-            //Chekear si hay algun evento nuevo en este ciclo
-            if(num_event_list > 0)
-            {
-                for(i = 0; i < num_event_list; i++)
-                {
-                    
-                }              
-            }
 
             denb++;
         }
@@ -65,5 +83,9 @@ int scheduler()
             printf("All jobs completed\n");
             break;
         }
+
+        //Chekear si hay algun evento nuevo en este ciclo
+        if(num_event_list > 0) free_job();
+        
     }
 }
