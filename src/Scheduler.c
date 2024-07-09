@@ -36,8 +36,8 @@ void free_job()
     }
     num_event_list--;
 }
-int kontBar=0;
-int kontCore=0;
+
+
 int scheduler()
 {
     while (1)
@@ -81,21 +81,20 @@ int scheduler()
             num_jobs--;
 
             i = 0;
-            kontCore++;
         }
-        kontBar++;
+        
         denb++;
        
+        // Chekear si hay algun evento nuevo en este ciclo
+        if (num_event_list > 0)
+            free_job();
+
         if (num_jobs == 0)
         {
             printf("All jobs completed\n");
             break;
-        }
+        }    
 
-        // Chekear si hay algun evento nuevo en este ciclo
-        if (num_event_list > 0)
-            free_job();
-    
         core();
     }
 }

@@ -1,11 +1,16 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <string.h>
 #include "../include/variables.h"
 #include "../include/Scheduler.h"
 #include "../include/Cores.h"
+
+#define MAX_LENGTH 512
+
+// Declarariones de variables
 
 int num_cores;
 int num_jobs;
@@ -22,15 +27,58 @@ int num_event_list;
 int num_active_jobs;
 int denb;
 
+FILE* ptr;
+char  *data, ch[MAX_LENGTH], *tok;
 
+void initialize()
+{
 
-void initialize();
+    for (int i = 0; i < num_cores; i++)
+    {
+        cores[i].id = i;
+        cores[i].busy = 0;
+    }
+}
+
+void read_jobs()
+{
+    ptr = fopen("data/jobs.txt", "r");
+
+    if(ptr == NULL)
+    {
+        printf("Fitxategia irakurtzen errore bat gertatu da\n");
+
+    }else
+    {
+        data = fgets(ch, MAX_LENGTH, ptr);
+        data = fgets(ch, MAX_LENGTH, ptr);
+        int i = 0;
+        int j;
+        while(data != EOF){ 
+            tok = strtok(data, " ");
+            job_queue[i].pid = atoi(tok);
+            tok = strtok(data, " ");
+            job_queue[i].arrival_time = atoi(tok);
+            tok = strtok(data, " ");
+            job_queue[i].num_events = atoi(tok);
+            tok = strtok(data, " ");
+            j = 0;
+            while(tok != NULL)
+            {
+                job_queue[i].events[j].time_event = atoi(tok);
+                tok = strtok(data, " ");
+                job_queue[i].events[j].num_cores = atoi(tok);
+                tok = strtok(data, " ");
+                j++;
+            }
+            i++;
+        }   
+        num_jobs = i;
+    }
+}
 
 int main(int argc, char *argv[])
 {
-
-     
-
     printf("Ezarri Sistemaren Core Zenbakia:\n");
     scanf("%d", &num_cores);
     cores = (struct cores *)malloc(num_cores * sizeof(struct cores));
@@ -45,51 +93,12 @@ int main(int argc, char *argv[])
     denb = 0;
     num_event_list = 0;
 
-    
     active_job = (struct job *)malloc(num_jobs * sizeof(struct job));
     event_list = (struct job *)malloc(num_jobs * sizeof(struct job));
 
     initialize();
-    
+    read_jobs();
 
-    scheduler();
-
-
-    
-    
+    scheduler();    
     return 0;
-}
-
-void initialize()
-{
-
-    for (int i = 0; i < num_cores; i++)
-    {
-        cores[i].id = i;
-        cores[i].busy = 0;
-    }
-        printf("Lista de trabajos:");
-    // TODO cambiar esto para que no sea aleatorio
-    for (int i = 0; i < num_jobs; i++)
-    {
-
-        job_queue[i].pid = i;
-        job_queue[i].arrival_time = rand() % 20;
-        job_queue[i].num_events = 1;
-        job_queue[i].events = (struct event *)malloc(job_queue[i].num_events * sizeof(struct event));
-        
-        job_queue[i].events[1].time_event = rand() % 20;
-        job_queue[i].events[1].num_cores = 0; //Simular que el job ha terminado
-        printf("Pid: %d\n", job_queue[i].pid);
-        printf("Arrival time: %d\n", job_queue[i].arrival_time);
-        printf("Num events: %d\n", job_queue[i].num_events);
-        printf("Time event: %d\n", job_queue[i].events[0].time_event);
-        printf("Num cores: %d\n", job_queue[i].events[0].num_cores);
-
-        /*for (int j = 0; j < job_queue[i].num_events; j++)
-        {
-            job_queue[i].events[j].time_event = rand() % 20;
-            job_queue[i].events[j].num_cores = rand() % num_cores;
-        }*/
-    }
 }
