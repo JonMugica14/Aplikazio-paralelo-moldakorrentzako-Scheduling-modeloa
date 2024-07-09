@@ -32,6 +32,7 @@ void free_job()
                 active_job[h] = active_job[h + 1];
             }
         }
+        num_active_jobs--;
     }
     num_event_list--;
 }
@@ -44,13 +45,13 @@ int scheduler()
        
         if (num_jobs != 0 && job_queue[0].arrival_time == denb && job_queue[0].events[0].num_cores <= free_cores)
         {
-            printf("Job %d started\n", job_queue[0].pid);
+           
             denb = 0;
             int i = 0;
             int core = 0;
             active_job[num_active_jobs] = job_queue[0];
             job = &active_job[num_active_jobs];
-            printf("KontCore: %d\n",kontCore);
+    
             while (core < job_queue[0].events[0].num_cores)
             {
                 if (cores[i].busy == 0)

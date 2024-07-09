@@ -55,10 +55,7 @@ int main(int argc, char *argv[])
     scheduler();
 
 
-    free(cores);
-    free(job_queue);
-    free(active_job);
-    free(event_list);
+    
     
     return 0;
 }
