@@ -42,19 +42,22 @@ void initialize()
 
 void read_jobs()
 {
-    ptr = fopen("data/jobs.txt", "r");
+    ptr = fopen("jobs.txt", "r");
 
     if(ptr == NULL)
     {
         printf("Fitxategia irakurtzen errore bat gertatu da\n");
+        exit(1);
 
     }else
-    {
+    {   
         data = fgets(ch, MAX_LENGTH, ptr);
         data = fgets(ch, MAX_LENGTH, ptr);
         int i = 0;
         int j;
-        while(data != EOF){ 
+        
+        while(atoi(data) != EOF){ 
+            
             tok = strtok(data, " ");
             job_queue[i].pid = atoi(tok);
             tok = strtok(data, " ");
@@ -63,14 +66,18 @@ void read_jobs()
             job_queue[i].num_events = atoi(tok);
             tok = strtok(data, " ");
             j = 0;
-            while(tok != NULL)
+            job_queue[i].events = (struct event *)malloc(job_queue[i].num_events * sizeof(struct event));
+            while(atoi(tok) != NULL)
             {
+                printf("tok: %d\n", atoi(tok));
                 job_queue[i].events[j].time_event = atoi(tok);
+                printf("time_event: %d\n", job_queue[i].events[j].time_event);
                 tok = strtok(data, " ");
                 job_queue[i].events[j].num_cores = atoi(tok);
                 tok = strtok(data, " ");
                 j++;
             }
+            data = fgets(ch, MAX_LENGTH, ptr);
             i++;
         }   
         num_jobs = i;
@@ -80,11 +87,13 @@ void read_jobs()
 int main(int argc, char *argv[])
 {
     printf("Ezarri Sistemaren Core Zenbakia:\n");
-    scanf("%d", &num_cores);
+   // scanf("%d", &num_cores);
+   num_cores = 4;
     cores = (struct cores *)malloc(num_cores * sizeof(struct cores));
     free_cores = num_cores;
+    num_jobs = 2;
     printf("Ezarri Sistemaren Lan Kopurua:\n");
-    scanf("%d", &num_jobs);
+   // scanf("%d", &num_jobs);
     job_queue = (struct job *)malloc(num_jobs * sizeof(struct job));
 
 
