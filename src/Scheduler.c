@@ -60,8 +60,8 @@ int scheduler()
                 {
                     printf("%d\n", num_active_jobs);
                     printf("%d\n", job->num_cores);
-                    printf("%d\n", active_job[num_active_jobs].cores[0]);
-                    active_job[num_active_jobs].cores[job->num_cores] = cores[i];
+                    printf("%d\n", active_job[num_active_jobs].cores[0].id);
+                    active_job[num_active_jobs].cores[job->num_cores-1] = cores[i];
                     
                     job->num_cores++;
                     cores[i].busy = 1;

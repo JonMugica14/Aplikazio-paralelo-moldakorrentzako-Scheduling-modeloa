@@ -101,6 +101,11 @@ void read_jobs()
             
         }
     }
+    for (int i = 0; i < num_jobs; i++)
+    {
+        job_queue[i].cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
+    }
+    
     fclose(ptr);
 }
 
@@ -119,9 +124,17 @@ int main(int argc, char *argv[])
     active_job = (struct job *)malloc(num_jobs * sizeof(struct job));
     event_list = (struct job *)malloc(num_jobs * sizeof(struct job));
     printf("Num Jobs: %d\n", num_jobs); 
+
     for (int i = 0; i < num_jobs; i++)
     {
+
         active_job[i].cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
+        for (int j = 0; j < max_cores; j++)
+        {
+            active_job[i].cores[j].id = -1;
+        }
+        printf("ID:%d\n", active_job[i].cores[0].id);
+        
     }
     
 
