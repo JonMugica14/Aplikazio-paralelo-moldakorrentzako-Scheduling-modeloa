@@ -8,10 +8,11 @@
 
 int core()
 {
-   
+   printf("Core\n");
 
         for (int i = 0; i < num_active_jobs; i++)
         {
+            printf("time_event: %d\n", active_job[i].events[0].time_event);
             if (active_job[i].events[0].time_event == 0)
             {
                 event_list[num_event_list] = active_job[i];
@@ -22,9 +23,6 @@ int core()
                 active_job[i].events[0].time_event--;
             }
         }
-
-
-
      
     
     return 0;

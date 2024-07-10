@@ -42,7 +42,7 @@ int scheduler()
 {
     while (1)
     {
-       
+       //Meter esto en un metodo aparte porque queda guarrisimo
         if (num_jobs != 0 && job_queue[0].arrival_time == denb && job_queue[0].events[0].num_cores <= free_cores)
         {
             printf("Job %d arrived\n", job_queue[0].pid);
@@ -69,29 +69,30 @@ int scheduler()
                 }
                 i++;
             }
+            num_active_jobs++;
+            free_cores -= job_queue[0].events[0].num_cores;
             printf("Job %d assigned to cores\n", job->pid);
+
             for (int i = 0; i < job_queue[0].num_events; i++)
             {
                 job_queue[0].events[i] = job_queue[0].events[i + 1];
             }
             job_queue[0].num_events--;
 
-            num_active_jobs++;
-
-            free_cores -= job_queue[0].events[0].num_cores;
+            
 
             for (i = 0; i < num_jobs - 1; i++)
             {
                 job_queue[i] = job_queue[i + 1];
             }
-
             num_jobs--;
 
             i = 0;
         }
-        
+        printf("proba\n");
+
         denb++;
-       
+        printf("num_event_list: %d\n", num_event_list);
         // Chekear si hay algun evento nuevo en este ciclo
         if (num_event_list > 0)
             free_job();
@@ -104,4 +105,6 @@ int scheduler()
 
         core();
     }
+
+    return 0;
 }
