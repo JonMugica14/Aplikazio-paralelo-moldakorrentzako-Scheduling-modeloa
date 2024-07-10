@@ -45,24 +45,31 @@ int scheduler()
        
         if (num_jobs != 0 && job_queue[0].arrival_time == denb && job_queue[0].events[0].num_cores <= free_cores)
         {
+            printf("Job %d arrived\n", job_queue[0].pid);
            
             denb = 0;
             int i = 0;
             int core = 0;
             active_job[num_active_jobs] = job_queue[0];
             job = &active_job[num_active_jobs];
-    
+            printf("Job %d started\n", job->pid);
+            printf("%d\n", job_queue[0].events[0].num_cores);
             while (core < job_queue[0].events[0].num_cores)
             {
                 if (cores[i].busy == 0)
                 {
+                    printf("%d\n", num_active_jobs);
+                    printf("%d\n", job->num_cores);
+                    printf("%d\n", active_job[num_active_jobs].cores[0]);
                     active_job[num_active_jobs].cores[job->num_cores] = cores[i];
+                    
                     job->num_cores++;
                     cores[i].busy = 1;
                     core++;
                 }
                 i++;
             }
+            printf("Job %d assigned to cores\n", job->pid);
             for (int i = 0; i < job_queue[0].num_events; i++)
             {
                 job_queue[0].events[i] = job_queue[0].events[i + 1];

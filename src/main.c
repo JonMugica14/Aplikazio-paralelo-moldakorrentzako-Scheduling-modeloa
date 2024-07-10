@@ -15,7 +15,8 @@
 int num_cores;
 int num_jobs;
 struct cores *cores;
-struct job *job_queue;
+struct job *job_queue=NULL;
+struct job *lagun;
 struct job *active_job;
 int free_cores;
 int max_cores;
@@ -27,8 +28,8 @@ int num_event_list;
 int num_active_jobs;
 int denb;
 
-FILE* ptr;
-char  *data, ch[MAX_LENGTH], *tok;
+FILE *ptr;
+char *data, ch[MAX_LENGTH], *tok;
 
 void initialize()
 {
@@ -44,70 +45,97 @@ void read_jobs()
 {
     ptr = fopen("jobs.txt", "r");
 
-    if(ptr == NULL)
+    if (ptr == NULL)
     {
         printf("Fitxategia irakurtzen errore bat gertatu da\n");
         exit(1);
-
-    }else
-    {   
+    }
+    else
+    {
         data = fgets(ch, MAX_LENGTH, ptr);
         data = fgets(ch, MAX_LENGTH, ptr);
         int i = 0;
         int j;
         
-        while(atoi(data) != EOF){ 
-            
+
+        while (data != NULL)
+        {
+            printf("Data: %s\n", data);
+        job_queue = (struct job *)realloc(job_queue, (num_jobs + 1) * sizeof(struct job));
+           if (job_queue == NULL) {
+            printf("Errore bat gertatu da realloc erabiliz\n");
+            exit(1); // O manejar el error de manera más adecuada
+        }
+          
             tok = strtok(data, " ");
+
             job_queue[i].pid = atoi(tok);
-            tok = strtok(data, " ");
+            tok = strtok(NULL, " ");
+
             job_queue[i].arrival_time = atoi(tok);
-            tok = strtok(data, " ");
+            tok = strtok(NULL, " ");
+
             job_queue[i].num_events = atoi(tok);
-            tok = strtok(data, " ");
+            tok = strtok(NULL, " ");
+
             j = 0;
+
             job_queue[i].events = (struct event *)malloc(job_queue[i].num_events * sizeof(struct event));
-            while(atoi(tok) != NULL)
+            while (tok != NULL && j < job_queue[i].num_events)
             {
-                printf("tok: %d\n", atoi(tok));
+
                 job_queue[i].events[j].time_event = atoi(tok);
-                printf("time_event: %d\n", job_queue[i].events[j].time_event);
-                tok = strtok(data, " ");
+
+                tok = strtok(NULL, " ");
+
                 job_queue[i].events[j].num_cores = atoi(tok);
-                tok = strtok(data, " ");
+                tok = strtok(NULL, " ");
+
                 j++;
             }
+
             data = fgets(ch, MAX_LENGTH, ptr);
+
             i++;
-        }   
-        num_jobs = i;
+            num_jobs = i;
+            
+        }
     }
+    fclose(ptr);
 }
 
 int main(int argc, char *argv[])
 {
     printf("Ezarri Sistemaren Core Zenbakia:\n");
-   // scanf("%d", &num_cores);
-   num_cores = 4;
-    cores = (struct cores *)malloc(num_cores * sizeof(struct cores));
-    free_cores = num_cores;
+    // scanf("%d", &num_cores);
+    max_cores = 4;
+    cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
+    free_cores = max_cores;
     num_jobs = 2;
-    printf("Ezarri Sistemaren Lan Kopurua:\n");
-   // scanf("%d", &num_jobs);
-    job_queue = (struct job *)malloc(num_jobs * sizeof(struct job));
-
-
-    num_active_jobs = 0;
-    max_cores = num_cores;
-    denb = 0;
-    num_event_list = 0;
-
-    active_job = (struct job *)malloc(num_jobs * sizeof(struct job));
-    event_list = (struct job *)malloc(num_jobs * sizeof(struct job));
+ 
 
     initialize();
     read_jobs();
+    active_job = (struct job *)malloc(num_jobs * sizeof(struct job));
+    event_list = (struct job *)malloc(num_jobs * sizeof(struct job));
+    printf("Num Jobs: %d\n", num_jobs); 
+    for (int i = 0; i < num_jobs; i++)
+    {
+        active_job[i].cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
+    }
+    
 
-    scheduler();    
+    
+
+    for (int i = 0; i < num_jobs; i++)
+    {
+        for (int j = 0; j < job_queue[i].num_events; j++)
+        {
+            printf("Job: %d, Arrival Time: %d, Event Time: %d, Num Cores: %d\n", job_queue[i].pid, job_queue[i].arrival_time, job_queue[i].events[j].time_event, job_queue[i].events[j].num_cores);
+        }
+    }
+    printf("Core: %d, Busy: %d\n", cores[0].id, cores[0].busy);
+
+    scheduler();
     return 0;
 }
