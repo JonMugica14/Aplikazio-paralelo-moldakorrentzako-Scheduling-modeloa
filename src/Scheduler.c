@@ -37,15 +37,9 @@ void free_job()
     num_event_list--;
 }
 
-
-int scheduler()
+void insert_job()
 {
-    while (1)
-    {
-       //Meter esto en un metodo aparte porque queda guarrisimo
-        if (num_jobs != 0 && job_queue[0].arrival_time == denb && job_queue[0].events[0].num_cores <= free_cores)
-        {
-            printf("Job %d arrived\n", job_queue[0].pid);
+    printf("Job %d arrived\n", job_queue[0].pid);
            
             denb = 0;
             int i = 0;
@@ -53,14 +47,14 @@ int scheduler()
             active_job[num_active_jobs] = job_queue[0];
             job = &active_job[num_active_jobs];
             printf("Job %d started\n", job->pid);
-            printf("%d\n", job_queue[0].events[0].num_cores);
+            //printf("%d\n", job_queue[0].events[0].num_cores);
             while (core < job_queue[0].events[0].num_cores)
             {
                 if (cores[i].busy == 0)
                 {
-                    printf("%d\n", num_active_jobs);
-                    printf("%d\n", job->num_cores);
-                    printf("%d\n", active_job[num_active_jobs].cores[0].id);
+                    //printf("%d\n", num_active_jobs);
+                    //printf("%d\n", job->num_cores);
+                    //printf("%d\n", active_job[num_active_jobs].cores[0].id);
                     active_job[num_active_jobs].cores[job->num_cores-1] = cores[i];
                     
                     job->num_cores++;
@@ -88,21 +82,28 @@ int scheduler()
             num_jobs--;
 
             i = 0;
+}
+int scheduler()
+{
+    while (1)
+    {
+       //Meter esto en un metodo aparte porque queda guarrisimo
+        if (num_jobs != 0 && job_queue[0].arrival_time >= denb && job_queue[0].events[0].num_cores <= free_cores)
+        {
+            insert_job();
         }
-        printf("proba\n");
-
         denb++;
-        printf("num_event_list: %d\n", num_event_list);
+        
         // Chekear si hay algun evento nuevo en este ciclo
         if (num_event_list > 0)
             free_job();
 
-        if (num_jobs == 0)
+        //En algun momento el num active jobs se va por debajo de 0 ns donde no encuentro pero ahi esta
+        if (num_jobs == 0 && num_active_jobs <= 0)
         {
             printf("All jobs completed\n");
             break;
         }    
-
         core();
     }
 

@@ -60,7 +60,7 @@ void read_jobs()
         
         while (data != NULL)
         {
-            printf("Data: %s\n", data);
+            printf("Data1: %s\n", data);
             job_queue = (struct job *)realloc(job_queue, (num_jobs + 1) * sizeof(struct job));
 
             if (job_queue == NULL) {
@@ -76,21 +76,27 @@ void read_jobs()
 
             tok = strtok(NULL, " ");
             job_queue[i].num_events = atoi(tok);
-
-            tok = strtok(NULL, " ");
             job_queue[i].events = (struct event *)malloc(job_queue[i].num_events * sizeof(struct event));
 
+            data = fgets(ch, MAX_LENGTH, ptr);
+            printf("Data2: %s\n", data);
+            tok = strtok(data, " ");
             j = 0;
+
+            // Esto porque es && y no ||???? osea funciona pk metemos a mano el numero de eventos bien pero nose
             while (tok != NULL && j <= job_queue[i].num_events)
             {
-
                 job_queue[i].events[j].time_event = atoi(tok);
                 tok = strtok(NULL, " ");
                 job_queue[i].events[j].num_cores = atoi(tok);
-                tok = strtok(NULL, " ");
+                printf("tok: %s\n", tok);
+                data = fgets(ch, MAX_LENGTH, ptr);
+                printf("Data3: %s\n", data);
+                tok = strtok(data, " ");
+                
                 j++;
-            }
 
+            }
             data = fgets(ch, MAX_LENGTH, ptr);
             i++;
             num_jobs = i;
@@ -104,20 +110,9 @@ void read_jobs()
         job_queue[i].cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
     }
     
-    fclose(ptr);
-}
+    fclose(ptr);        
 
-int main(int argc, char *argv[])
-{
-    //printf("Ezarri Sistemaren Core Zenbakia:\n");
-    // scanf("%d", &num_cores);
-
-    max_cores = 4;
-    cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
-    free_cores = max_cores;
-    
-    read_jobs();
-    initialize();
+    //Inicializar los traballos activos
 
     active_job = (struct job *)malloc(num_jobs * sizeof(struct job));
     event_list = (struct job *)malloc(num_jobs * sizeof(struct job));
@@ -134,12 +129,25 @@ int main(int argc, char *argv[])
         printf("ID:%d\n", active_job[i].cores[0].id);
         
     }
+}
+
+int main(int argc, char *argv[])
+{
+    //printf("Ezarri Sistemaren Core Zenbakia:\n");
+    // scanf("%d", &num_cores);
+
+    max_cores = 10;
+    cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
+    free_cores = max_cores;
+    
+    read_jobs();
+    initialize();
     
     for (int i = 0; i < num_jobs; i++)
     {
-        for (int j = 0; j < job_queue[i].num_events; j++)
+        for (int j = 0; j <=job_queue[i].num_events; j++)
         {
-            printf("Job: %d, Arrival Time: %d, Event Num: %d, Event Time: %d, Num Cores: %d\n", job_queue[i].pid, job_queue[i].arrival_time, job_queue[i].num_events, job_queue[i].events[j].time_event, job_queue[i].events[j].num_cores);
+            printf("Job: %d, Arrival Time: %d, Event Time: %d, Num Cores: %d\n", job_queue[i].pid, job_queue[i].arrival_time, job_queue[i].events[j].time_event, job_queue[i].events[j].num_cores);
         }
     }
 

@@ -1,3 +1,8 @@
-## ID Arrival_time Event_num (Event_time Event_core)*
-1 1 1 0 4 4 0
-2 3 1 0 3 10 0
+## ID Arrival_time Event_num (\nEvent_time Event_core)*
+1 1 1 
+0 4 
+4 0
+
+2 1 1 
+0 3 
+10 0
