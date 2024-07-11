@@ -15,7 +15,7 @@
 int num_cores;
 int num_jobs;
 struct cores *cores;
-struct job *job_queue=NULL;
+struct job *job_queue = NULL;
 struct job *lagun;
 struct job *active_job;
 int free_cores;
@@ -54,20 +54,21 @@ void read_jobs()
     {
         data = fgets(ch, MAX_LENGTH, ptr);
         data = fgets(ch, MAX_LENGTH, ptr);
-        
+
         int i = 0;
         int j;
-        
+
         while (data != NULL)
         {
-            //printf("Data1: %s\n", data);
+            // printf("Data1: %s\n", data);
             job_queue = (struct job *)realloc(job_queue, (num_jobs + 1) * sizeof(struct job));
 
-            if (job_queue == NULL) {
+            if (job_queue == NULL)
+            {
                 printf("Errore bat gertatu da realloc erabiliz\n");
                 exit(1); // O manejar el error de manera más adecuada
             }
-          
+
             tok = strtok(data, " ");
             job_queue[i].pid = atoi(tok);
 
@@ -79,7 +80,7 @@ void read_jobs()
             job_queue[i].events = (struct event *)malloc(job_queue[i].num_events * sizeof(struct event));
 
             data = fgets(ch, MAX_LENGTH, ptr);
-            //printf("Data2: %s\n", data);
+            // printf("Data2: %s\n", data);
             tok = strtok(data, " ");
             j = 0;
 
@@ -89,35 +90,33 @@ void read_jobs()
                 job_queue[i].events[j].time_event = atoi(tok);
                 tok = strtok(NULL, " ");
                 job_queue[i].events[j].num_cores = atoi(tok);
-                //printf("tok: %s\n", tok);
+                // printf("tok: %s\n", tok);
                 data = fgets(ch, MAX_LENGTH, ptr);
-                //printf("Data3: %s\n", data);
+                // printf("Data3: %s\n", data);
                 tok = strtok(data, " ");
-                
-                j++;
 
+                j++;
             }
             data = fgets(ch, MAX_LENGTH, ptr);
             i++;
             num_jobs = i;
         }
-        
     }
 
-    //Esto es suponiendo que el número inicial de cores es el máximo al principio
+    // Esto es suponiendo que el número inicial de cores es el máximo al principio
     for (int i = 0; i < num_jobs; i++)
     {
         job_queue[i].cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
     }
-    
-    fclose(ptr);        
 
-    //Inicializar los traballos activos
+    fclose(ptr);
+
+    // Inicializar los traballos activos
 
     active_job = (struct job *)malloc(num_jobs * sizeof(struct job));
     event_list = (struct job *)malloc(num_jobs * sizeof(struct job));
 
-    printf("Num Jobs: %d\n", num_jobs); 
+    printf("Num Jobs: %d\n", num_jobs);
 
     for (int i = 0; i < num_jobs; i++)
     {
@@ -126,34 +125,45 @@ void read_jobs()
         {
             active_job[i].cores[j].id = -1;
         }
-        //printf("ID:%d\n", active_job[i].cores[0].id);
-        
+        // printf("ID:%d\n", active_job[i].cores[0].id);
     }
 }
 
 int main(int argc, char *argv[])
 {
-    //printf("Ezarri Sistemaren Core Zenbakia:\n");
-    // scanf("%d", &num_cores);
+    // printf("Ezarri Sistemaren Core Zenbakia:\n");
+    //  scanf("%d", &num_cores);
 
     max_cores = 10;
     cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
     free_cores = max_cores;
-    
+
     read_jobs();
     initialize();
-    
+
     for (int i = 0; i < num_jobs; i++)
     {
-         printf("Job: %d, Arrival Time: %d\n", job_queue[i].pid, job_queue[i].arrival_time);
+        printf("Job: %d, Arrival Time: %d\n", job_queue[i].pid, job_queue[i].arrival_time);
 
-        for (int j = 0; j <=job_queue[i].num_events; j++)
+        for (int j = 0; j <= job_queue[i].num_events; j++)
         {
             printf("   Event time: %d, Num Cores: %d\n", job_queue[i].events[j].time_event, job_queue[i].events[j].num_cores);
         }
     }
 
-
     scheduler();
+
+    for (int i = 0; i < num_jobs; i++)
+    {
+
+        free(job_queue[i].events);
+    }
+    free(job_queue);
+
+    free(cores);
+
+    free(active_job);
+    free(event_list);
+
     return 0;
 }

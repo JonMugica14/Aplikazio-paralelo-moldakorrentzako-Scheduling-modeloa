@@ -49,7 +49,7 @@ void insert_job()
     active_job[num_active_jobs] = job_queue[0];
     job = &active_job[num_active_jobs];
     printf("Job %d started\n", job->pid);
-    
+
     // printf("Job %d has %d cores\n", job->pid, job_queue[0].events[0].num_cores);
     // printf("%d\n", job_queue[0].events[0].num_cores);
     while (core < job_queue[0].events[0].num_cores)
@@ -57,7 +57,7 @@ void insert_job()
         if (cores[i].busy == 0)
         {
             // printf("%d\n", num_active_jobs);
-             //printf("%d\n", job->num_cores);
+            // printf("%d\n", job->num_cores);
             // printf("%d\n", active_job[num_active_jobs].cores[0].id);
             active_job[num_active_jobs].cores[job->num_cores] = cores[i];
 
@@ -67,7 +67,7 @@ void insert_job()
         }
         i++;
     }
-     
+
     free_cores -= job_queue[0].events[0].num_cores;
 
     for (int i = 0; i < active_job[num_active_jobs].num_events; i++)
@@ -78,14 +78,13 @@ void insert_job()
 
     num_active_jobs++;
 
-    for (i = 0; i < num_jobs -1; i++)
+    for (i = 0; i < num_jobs - 1; i++)
     {
         job_queue[i] = job_queue[i + 1];
     }
     num_jobs--;
 
     i = 0;
-   
 }
 int scheduler()
 {
@@ -114,7 +113,7 @@ int scheduler()
             break;
         }
         core();
-        // sleep(1);
+        sleep(1);
     }
 
     return 0;
