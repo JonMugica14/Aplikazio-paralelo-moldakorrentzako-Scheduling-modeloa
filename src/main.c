@@ -25,7 +25,7 @@ int num_scheduler_events;
 int Time;
 struct job *event_list;
 int num_event_list = 0;
-int num_active_jobs;
+int num_active_jobs = 0;
 int denb;
 
 FILE *ptr;
@@ -60,7 +60,7 @@ void read_jobs()
         
         while (data != NULL)
         {
-            printf("Data1: %s\n", data);
+            //printf("Data1: %s\n", data);
             job_queue = (struct job *)realloc(job_queue, (num_jobs + 1) * sizeof(struct job));
 
             if (job_queue == NULL) {
@@ -79,7 +79,7 @@ void read_jobs()
             job_queue[i].events = (struct event *)malloc(job_queue[i].num_events * sizeof(struct event));
 
             data = fgets(ch, MAX_LENGTH, ptr);
-            printf("Data2: %s\n", data);
+            //printf("Data2: %s\n", data);
             tok = strtok(data, " ");
             j = 0;
 
@@ -89,9 +89,9 @@ void read_jobs()
                 job_queue[i].events[j].time_event = atoi(tok);
                 tok = strtok(NULL, " ");
                 job_queue[i].events[j].num_cores = atoi(tok);
-                printf("tok: %s\n", tok);
+                //printf("tok: %s\n", tok);
                 data = fgets(ch, MAX_LENGTH, ptr);
-                printf("Data3: %s\n", data);
+                //printf("Data3: %s\n", data);
                 tok = strtok(data, " ");
                 
                 j++;
@@ -126,7 +126,7 @@ void read_jobs()
         {
             active_job[i].cores[j].id = -1;
         }
-        printf("ID:%d\n", active_job[i].cores[0].id);
+        //printf("ID:%d\n", active_job[i].cores[0].id);
         
     }
 }
@@ -145,9 +145,11 @@ int main(int argc, char *argv[])
     
     for (int i = 0; i < num_jobs; i++)
     {
+         printf("Job: %d, Arrival Time: %d\n", job_queue[i].pid, job_queue[i].arrival_time);
+
         for (int j = 0; j <=job_queue[i].num_events; j++)
         {
-            printf("Job: %d, Arrival Time: %d, Event Time: %d, Num Cores: %d\n", job_queue[i].pid, job_queue[i].arrival_time, job_queue[i].events[j].time_event, job_queue[i].events[j].num_cores);
+            printf("   Event time: %d, Num Cores: %d\n", job_queue[i].events[j].time_event, job_queue[i].events[j].num_cores);
         }
     }
 

@@ -11,16 +11,19 @@ struct job *job;
 
 void free_job()
 {
-    for (int i = num_event_list - 1; i >= 0; i--)
+    for (int i = num_event_list - 1; i >=0; i--)
     {
-        for (int j = 0; event_list[i].num_cores; j++)
+        //printf("num_event_list: %d, i : %d\n", num_event_list, i);
+        printf("Freeing job : %d\n", event_list[i].pid);
+        for (int j = 0; j < event_list[i].num_cores; j++)
         {
             event_list[i].cores[j].busy = 0;
-            free_cores++;
+            
         }
-
+        free_cores+= event_list[i].num_cores;
         int lag = 0;
-        for (int h = 0; i < num_active_jobs; i++)
+        //Revisar esto porque lo del lag y tal no me convence
+        for (int h = 0; h < num_active_jobs; h++)
         {
             if (active_job[h].pid == event_list[i].pid)
             {
@@ -32,15 +35,15 @@ void free_job()
                 active_job[h] = active_job[h + 1];
             }
         }
+        num_event_list--;
         num_active_jobs--;
+        //printf("num_event_list: %d\n", num_event_list); 
     }
-    num_event_list--;
+    
 }
 
 void insert_job()
-{
-    printf("Job %d arrived\n", job_queue[0].pid);
-           
+{          
             denb = 0;
             int i = 0;
             int core = 0;
@@ -65,7 +68,7 @@ void insert_job()
             }
             num_active_jobs++;
             free_cores -= job_queue[0].events[0].num_cores;
-            printf("Job %d assigned to cores\n", job->pid);
+           
 
             for (int i = 0; i < job_queue[0].num_events; i++)
             {
@@ -88,7 +91,7 @@ int scheduler()
     while (1)
     {
        //Meter esto en un metodo aparte porque queda guarrisimo
-        if (num_jobs != 0 && job_queue[0].arrival_time >= denb && job_queue[0].events[0].num_cores <= free_cores)
+        if (num_jobs != 0 && job_queue[0].arrival_time <= denb && job_queue[0].events[0].num_cores <= free_cores)
         {
             insert_job();
         }
@@ -96,15 +99,22 @@ int scheduler()
         
         // Chekear si hay algun evento nuevo en este ciclo
         if (num_event_list > 0)
+        {
             free_job();
+        }
+        
 
+         printf("Free cores: %d\n", free_cores);
         //En algun momento el num active jobs se va por debajo de 0 ns donde no encuentro pero ahi esta
+        printf("Num active jobs: %d\n", num_active_jobs);
+        printf("Num jobs: %d\n", num_jobs);
         if (num_jobs == 0 && num_active_jobs <= 0)
         {
             printf("All jobs completed\n");
             break;
         }    
         core();
+        sleep(1);
     }
 
     return 0;

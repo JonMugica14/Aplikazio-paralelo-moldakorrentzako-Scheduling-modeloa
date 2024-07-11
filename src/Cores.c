@@ -8,15 +8,15 @@
 
 int core()
 {
-   printf("Core\n");
-
+    printf("Active jobs: \n");
         for (int i = 0; i < num_active_jobs; i++)
         {
-            printf("time_event: %d\n", active_job[i].events[0].time_event);
-            if (active_job[i].events[0].time_event == 0)
+            printf("Job id: %d, time_event: %d, event cores: %d\n", active_job[i].pid, active_job[i].events[0].time_event, active_job[i].events[0].num_cores);
+            if (active_job[i].events[0].time_event <= 0)
             {
                 event_list[num_event_list] = active_job[i];
                 num_event_list++;
+                printf("Job %d finished\n", active_job[i].pid); 
             }
             else
             {
