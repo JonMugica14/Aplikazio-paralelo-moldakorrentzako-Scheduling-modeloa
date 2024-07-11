@@ -1,7 +1,8 @@
 {
     "files.associations": {
         "variables.h": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "scheduler.h": "c"
     },
     "C_Cpp.default.compilerPath": "/home/haitz/Modelo-de-Scheduling-para-aplicaciones-paralelas-maleables/src/main.c"
 }

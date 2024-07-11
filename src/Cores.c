@@ -12,11 +12,13 @@ int core()
         for (int i = 0; i < num_active_jobs; i++)
         {
             printf("Job id: %d, time_event: %d, event cores: %d\n", active_job[i].pid, active_job[i].events[0].time_event, active_job[i].events[0].num_cores);
+          //  if(job_queue[0].pid==6) printf("Pid %d, arrival_time:%d, Num_events:%d\n", job_queue[0].pid, job_queue[0].arrival_time, job_queue[0].num_events);
             if (active_job[i].events[0].time_event <= 0)
             {
                 event_list[num_event_list] = active_job[i];
                 num_event_list++;
                 printf("Job %d finished\n", active_job[i].pid); 
+                
             }
             else
             {
