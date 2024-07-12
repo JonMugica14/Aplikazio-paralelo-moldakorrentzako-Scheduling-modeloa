@@ -129,15 +129,49 @@ void read_jobs()
     }
 }
 
+void generateJob(int n){
+
+    FILE *fptr;
+    fptr = fopen("jobs.txt", "w");
+
+    if (fptr == NULL)
+    {
+        printf("Errorea fitxategia sortzean\n");
+        exit(1);
+    }
+
+    fprintf(fptr, "PID ArrivalTime NumEvents\n");
+
+    for (int i =1; i<=n; i++){
+        fprintf(fptr, "%d %d %d\n", i, rand()%20, 1);
+        fprintf(fptr, "0 %d\n", rand()%max_cores);
+        fprintf(fptr, "%d %d\n", rand()%20, 0);
+        fprintf(fptr, "\n");
+    }
+    fclose(fptr);
+
+
+
+
+
+
+
+}
+
 int main(int argc, char *argv[])
 {
     // printf("Ezarri Sistemaren Core Zenbakia:\n");
     //  scanf("%d", &num_cores);
-
+    int create_jobs;
     max_cores = 10;
     cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
     free_cores = max_cores;
-
+    printf("---------------------------\n");
+    printf("Sartu lan kopurua:\n");
+    scanf("%d", &create_jobs);
+    printf("---------------------------\n");
+    generateJob(create_jobs);
+    sleep(1);
     read_jobs();
     initialize();
 

@@ -50,15 +50,11 @@ void insert_job()
     job = &active_job[num_active_jobs];
     printf("Job %d started\n", job->pid);
 
-    // printf("Job %d has %d cores\n", job->pid, job_queue[0].events[0].num_cores);
-    // printf("%d\n", job_queue[0].events[0].num_cores);
+    
     while (core < job_queue[0].events[0].num_cores)
     {
         if (cores[i].busy == 0)
         {
-            // printf("%d\n", num_active_jobs);
-            // printf("%d\n", job->num_cores);
-            // printf("%d\n", active_job[num_active_jobs].cores[0].id);
             active_job[num_active_jobs].cores[job->num_cores] = cores[i];
 
             job->num_cores++;
