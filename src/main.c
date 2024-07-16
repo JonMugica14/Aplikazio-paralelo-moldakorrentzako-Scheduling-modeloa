@@ -60,13 +60,13 @@ void read_jobs()
 
         while (data != NULL)
         {
-            // printf("Data1: %s\n", data);
+
             job_queue = (struct job *)realloc(job_queue, (num_jobs + 1) * sizeof(struct job));
 
             if (job_queue == NULL)
             {
                 printf("Errore bat gertatu da realloc erabiliz\n");
-                exit(1); // O manejar el error de manera más adecuada
+                exit(1);
             }
 
             tok = strtok(data, " ");
@@ -80,19 +80,18 @@ void read_jobs()
             job_queue[i].events = (struct event *)malloc(job_queue[i].num_events * sizeof(struct event));
 
             data = fgets(ch, MAX_LENGTH, ptr);
-            // printf("Data2: %s\n", data);
+
             tok = strtok(data, " ");
             j = 0;
 
-            // Esto porque es && y no ||???? osea funciona pk metemos a mano el numero de eventos bien pero nose
             while (tok != NULL && j <= job_queue[i].num_events)
             {
                 job_queue[i].events[j].time_event = atoi(tok);
                 tok = strtok(NULL, " ");
                 job_queue[i].events[j].num_cores = atoi(tok);
-                // printf("tok: %s\n", tok);
+
                 data = fgets(ch, MAX_LENGTH, ptr);
-                // printf("Data3: %s\n", data);
+
                 tok = strtok(data, " ");
 
                 j++;
@@ -103,15 +102,12 @@ void read_jobs()
         }
     }
 
-    // Esto es suponiendo que el número inicial de cores es el máximo al principio
     for (int i = 0; i < num_jobs; i++)
     {
         job_queue[i].cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
     }
 
     fclose(ptr);
-
-    // Inicializar los traballos activos
 
     active_job = (struct job *)malloc(num_jobs * sizeof(struct job));
     event_list = (struct job *)malloc(num_jobs * sizeof(struct job));
@@ -125,11 +121,11 @@ void read_jobs()
         {
             active_job[i].cores[j].id = -1;
         }
-        // printf("ID:%d\n", active_job[i].cores[0].id);
     }
 }
 
-void generateJob(int n){
+void generateJob(int n)
+{
 
     FILE *fptr;
     fptr = fopen("jobs.txt", "w");
@@ -142,26 +138,19 @@ void generateJob(int n){
 
     fprintf(fptr, "PID ArrivalTime NumEvents\n");
 
-    for (int i =1; i<=n; i++){
-        fprintf(fptr, "%d %d %d\n", i, rand()%20, 1);
-        fprintf(fptr, "0 %d\n", rand()%max_cores);
-        fprintf(fptr, "%d %d\n", rand()%20, 0);
+    for (int i = 1; i <= n; i++)
+    {
+        fprintf(fptr, "%d %d %d\n", i, rand() % 20, 1);
+        fprintf(fptr, "0 %d\n", rand() % max_cores);
+        fprintf(fptr, "%d %d\n", rand() % 20, 0);
         fprintf(fptr, "\n");
     }
     fclose(fptr);
-
-
-
-
-
-
-
 }
 
 int main(int argc, char *argv[])
 {
-    // printf("Ezarri Sistemaren Core Zenbakia:\n");
-    //  scanf("%d", &num_cores);
+
     int create_jobs;
     max_cores = 10;
     cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
