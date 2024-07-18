@@ -8,7 +8,7 @@
 
 int core()
 {
-    printf("Active jobs: \n");
+    /*printf("Active jobs: \n");
     for (int i = 0; i < num_active_jobs; i++)
     {
         printf("Job id: %d, time_event: %d, event cores: %d\n", active_job[i].pid, active_job[i].events[0].time_event, active_job[i].events[0].num_cores);
@@ -24,6 +24,6 @@ int core()
             active_job[i].events[0].time_event--;
         }
     }
-
+    */
     return 0;
 }

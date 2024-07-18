@@ -34,7 +34,15 @@ struct cores
 extern struct cores *cores; // Listado de cores
 extern int max_cores;       // Numero Máximo de cores
 extern int denb;            // Tiempo desde la última inserción de jobs
+extern int ciclototal;     // Ciclo total de ejecución
 extern int free_cores;      // Numero de cores libres
 
-extern struct job *event_list; // Lista de eventos que han saltado
+struct scheduled_events 
+{
+    struct job job;    // El trabajo
+    int eventnum;       // El numero del evento del trabajo
+    int eventtime;      // El tiempo que falta para ejecutarlo (Comparado con el anterior)
+};
+
+extern struct scheduled_events *event_list; // Lista de eventos a futuro
 extern int num_event_list;

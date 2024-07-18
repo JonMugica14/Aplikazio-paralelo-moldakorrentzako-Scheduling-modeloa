@@ -23,10 +23,11 @@ int max_cores;
 struct scheduler_events *scheduler_events;
 int num_scheduler_events;
 int Time;
-struct job *event_list;
+struct scheduled_events *event_list;
 int num_event_list = 0;
 int num_active_jobs = 0;
 int denb;
+int ciclototal = 0;
 
 FILE *ptr;
 char *data, ch[MAX_LENGTH], *tok;
@@ -110,7 +111,7 @@ void read_jobs()
     fclose(ptr);
 
     active_job = (struct job *)malloc(num_jobs * sizeof(struct job));
-    event_list = (struct job *)malloc(num_jobs * sizeof(struct job));
+    event_list = (struct scheduled_events *)malloc(num_jobs * sizeof(struct scheduled_events));
 
     printf("Num Jobs: %d\n", num_jobs);
 
@@ -175,6 +176,8 @@ int main(int argc, char *argv[])
     }
 
     scheduler();
+
+    printf("Ziklo kopurua: %d\n", ciclototal);
 
     for (int i = 0; i < num_jobs; i++)
     {
