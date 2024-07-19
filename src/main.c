@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
 {
 
     int create_jobs;
-    max_cores = 10;
+    max_cores = 20;
     cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
     free_cores = max_cores;
     printf("---------------------------\n");
