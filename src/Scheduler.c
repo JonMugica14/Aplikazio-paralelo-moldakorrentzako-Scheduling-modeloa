@@ -184,7 +184,7 @@ int scheduler()
         // Creo que esto no hace falta. Si calculamos desde aquí cuanto falta hasta cada evento, no hace falta el core
         //core();
         print_info();
-        sleep(1);
+      
         ciclototal++;
     }
 

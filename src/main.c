@@ -158,10 +158,10 @@ int main(int argc, char *argv[])
     free_cores = max_cores;
     printf("---------------------------\n");
     printf("Sartu lan kopurua:\n");
-    scanf("%d", &create_jobs);
+    //scanf("%d", &create_jobs);
     printf("---------------------------\n");
-    generateJob(create_jobs);
-    sleep(1);
+    //generateJob(create_jobs);
+ 
     read_jobs();
     initialize();
 
