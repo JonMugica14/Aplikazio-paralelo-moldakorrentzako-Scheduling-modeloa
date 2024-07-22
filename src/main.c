@@ -35,10 +35,11 @@ char *data, ch[MAX_LENGTH], *tok;
 void initialize()
 {
 
-    for (int i = 0; i < num_cores; i++)
+    for (int i = 0; i < max_cores; i++)
     {
         cores[i].id = i;
         cores[i].busy = 0;
+        printf("Core: %d, Busy: %d\n", cores[i].id, cores[i].busy);
     }
 }
 
@@ -163,6 +164,7 @@ int main(int argc, char *argv[])
     //generateJob(create_jobs);
  
     read_jobs();
+    printf("---------------------------\n");
     initialize();
 
    /* for (int i = 0; i < num_jobs; i++)

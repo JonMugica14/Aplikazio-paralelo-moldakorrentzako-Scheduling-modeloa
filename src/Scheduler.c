@@ -8,6 +8,7 @@
 #include "../include/Cores.h"
 
 struct job *job;
+void print_info();
 
 void free_job(struct job job, int eventnum)
 {
@@ -15,6 +16,8 @@ void free_job(struct job job, int eventnum)
         for (int j = 0; j < job.num_cores; j++)
         {
             job.cores[j].busy = 0;
+            cores[job.cores[j].id].busy = 0;
+            
         }
         free_cores += job.num_cores;
         int lag = 0;
@@ -41,10 +44,10 @@ void checkevent()
     {   
         while (event_list[0].eventtime <= 0 && num_event_list > 0)
         {
-            printf("Event adfasdfasdfasfasdd: %d\n", event_list[0].job.events[0].num_cores);
+           // printf("Event adfasdfasdfasfasdd: %d\n", event_list[0].job.events[0].num_cores);
             if(event_list[0].job.events[event_list[0].eventnum].num_cores == 0)
             {
-                printf("añjflkasjfñlksdjñklf\n");
+             //   printf("añjflkasjfñlksdjñklf\n");
                 free_job(event_list[0].job, event_list[0].eventnum);
             }
             else
@@ -81,18 +84,21 @@ void insert_job()
     }
     num_jobs--;
 
-                if(num_event_list > 0)
-    {
-         printf("Job id %d, event nodo %d bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n", event_list[0].job.pid, event_list[0].job.events[0].num_cores);
-    }
+             
+
+   
     // Asigna cores
+   
+    i=0;
     while (core < active_job[num_active_jobs].events[0].num_cores)
-    {
+    {   
         if (cores[i].busy == 0)
-        {
+        {   
+            
             active_job[num_active_jobs].cores[job->num_cores] = cores[i];
 
             job->num_cores++;
+            printf("Num cores: %d\n", job->num_cores);
             cores[i].busy = 1;
             core++;
         }
@@ -100,10 +106,7 @@ void insert_job()
     }
     free_cores -= job_queue[0].events[0].num_cores;
 
-    if(num_event_list > 0)
-    {
-         printf("Job id %d, event nodo %d AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n", event_list[0].job.pid, event_list[0].job.events[0].num_cores);
-    }
+   
     // Actualizar lista de eventos del job
     for (int i = 0; i < active_job[num_active_jobs].num_events; i++)
     {
@@ -147,9 +150,9 @@ void insert_job()
                 // no muy seguro de si es > 
                 for(int k = num_event_list; k > j; k--)
                 {
-                    printf("Job id %d, event nodo %d \n", event_list[k-1].job.pid, event_list[k-1].job.events[0].num_cores);
+                  
                     event_list[k] = event_list[k-1];
-                    printf("Job id %d, event nodo %d \n", event_list[k].job.pid, event_list[k].job.events[0].num_cores);
+                  
                 }
 
                 event_list[j].eventtime = active_job[num_active_jobs].events[i].time_event - added_time + event_list[j+1].eventtime;
@@ -172,8 +175,7 @@ void insert_job()
 
     num_active_jobs++;
 
-    printf("Num active jobs: %d\n", num_active_jobs);
-    printf("Num event list: %d\n", num_event_list);
+   
     if(num_event_list != num_active_jobs)
     {
         printf("ERROR: Event list and active jobs are not the same size\n");
