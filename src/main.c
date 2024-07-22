@@ -53,6 +53,7 @@ void read_jobs()
     }
     else
     {
+        printf("Fitxategia irakurri da\n");
         data = fgets(ch, MAX_LENGTH, ptr);
         data = fgets(ch, MAX_LENGTH, ptr);
 
@@ -61,7 +62,6 @@ void read_jobs()
 
         while (data != NULL)
         {
-
             job_queue = (struct job *)realloc(job_queue, (num_jobs + 1) * sizeof(struct job));
 
             if (job_queue == NULL)
@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
     read_jobs();
     initialize();
 
-    for (int i = 0; i < num_jobs; i++)
+   /* for (int i = 0; i < num_jobs; i++)
     {
         printf("Job: %d, Arrival Time: %d\n", job_queue[i].pid, job_queue[i].arrival_time);
 
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
         {
             printf("   Event time: %d, Num Cores: %d\n", job_queue[i].events[j].time_event, job_queue[i].events[j].num_cores);
         }
-    }
+    }*/
 
     scheduler();
 
