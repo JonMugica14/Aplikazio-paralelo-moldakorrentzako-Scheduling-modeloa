@@ -1,4 +1,4 @@
-Num Jobs: 10
+Num Jobs: 1
 Job: 0, Arrival Time: 3
    Event time: 0, Num Cores: 6
    Event time: 17, Num Cores: 0
