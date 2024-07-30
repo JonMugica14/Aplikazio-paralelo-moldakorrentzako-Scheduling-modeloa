@@ -153,29 +153,21 @@ void generateJob(int n)
 int main(int argc, char *argv[])
 {
 
-    int create_jobs;
+  
     max_cores = 20;
     cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
     free_cores = max_cores;
     printf("---------------------------\n");
-    printf("Sartu lan kopurua:\n");
-    //scanf("%d", &create_jobs);
+    printf("Programa hasi da:\n");
+
     printf("---------------------------\n");
-    //generateJob(create_jobs);
+
  
     read_jobs();
     printf("---------------------------\n");
     initialize();
 
-   /* for (int i = 0; i < num_jobs; i++)
-    {
-        printf("Job: %d, Arrival Time: %d\n", job_queue[i].pid, job_queue[i].arrival_time);
-
-        for (int j = 0; j <= job_queue[i].num_events; j++)
-        {
-            printf("   Event time: %d, Num Cores: %d\n", job_queue[i].events[j].time_event, job_queue[i].events[j].num_cores);
-        }
-    }*/
+   
 
     scheduler();
 

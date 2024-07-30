@@ -44,15 +44,15 @@ void checkevent()
     {   
         while (event_list[0].eventtime <= 0 && num_event_list > 0)
         {
-           // printf("Event adfasdfasdfasfasdd: %d\n", event_list[0].job.events[0].num_cores);
+       
             if(event_list[0].job.events[event_list[0].eventnum].num_cores == 0)
             {
-             //   printf("añjflkasjfñlksdjñklf\n");
+           
                 free_job(event_list[0].job, event_list[0].eventnum);
             }
             else
             {
-                //update_job();
+                
             }
             for(int i = 0; i < num_event_list; i++)
             {
@@ -129,8 +129,7 @@ void insert_job()
         }
         else
         {
-            // no muy seguro de si esta bien asi con el if pero bueno
-            // TODO reestructurar esto porque no tiene ni puto sentido, yo ya nose como va esto no tiene sentido (YO no tengo ni idea deberia dormir)
+            j = 0;
            
             while(active_job[num_active_jobs].events[i].time_event - added_time >= 0 && j < num_event_list)
             {
@@ -147,7 +146,7 @@ void insert_job()
             }
             if(j < num_event_list)
             {
-                // no muy seguro de si es > 
+              
                 for(int k = num_event_list; k > j; k--)
                 {
                   
@@ -226,8 +225,7 @@ int scheduler()
             printf("All jobs completed\n");
             break;
         }
-        // Creo que esto no hace falta. Si calculamos desde aquí cuanto falta hasta cada evento, no hace falta el core
-        //core();
+       
         print_info();
       
         ciclototal++;
