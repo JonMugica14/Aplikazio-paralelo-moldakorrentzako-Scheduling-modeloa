@@ -9,6 +9,7 @@
 
 struct job *job;
 void print_info();
+void insert_job(struct job *insjob);
 
 void free_job(struct job job, int eventnum)
 {
@@ -199,7 +200,8 @@ void insert_job(struct job *insjob)
         }
         i++;
     }
-    free_cores -= job_queue[0].events[0].num_cores;
+    
+    free_cores -= active_job[num_active_jobs].num_cores;
 
     // Actualizar lista de eventos del job
     for (int i = 0; i < active_job[num_active_jobs].num_events; i++)
@@ -318,6 +320,7 @@ int scheduler()
         print_info();
 
         ciclototal++;
+        
     }
 
     return 0;

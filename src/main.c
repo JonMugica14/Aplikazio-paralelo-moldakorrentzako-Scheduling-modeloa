@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
     free_cores = max_cores;
     printf("---------------------------\n");
     printf("Programa hasi da:\n");
-
+   
     printf("---------------------------\n");
 
  
