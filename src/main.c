@@ -28,6 +28,7 @@ int num_event_list = 0;
 int num_active_jobs = 0;
 int denb;
 int ciclototal = 0;
+int blocked = 0;
 
 FILE *ptr;
 char *data, ch[MAX_LENGTH], *tok;

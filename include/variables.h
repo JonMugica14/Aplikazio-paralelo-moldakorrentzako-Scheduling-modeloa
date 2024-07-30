@@ -36,6 +36,7 @@ extern int max_cores;       // Numero Máximo de cores
 extern int denb;            // Tiempo desde la última inserción de jobs
 extern int ciclototal;     // Ciclo total de ejecución
 extern int free_cores;      // Numero de cores libres
+extern int blocked;          //Señaliza si hay algun trabajo bloqueado
 
 struct scheduled_events 
 {
