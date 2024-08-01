@@ -145,7 +145,9 @@ void generateJob(int n)
     {
         fprintf(fptr, "%d %d %d\n", i, rand() % 20, 1);
         fprintf(fptr, "0 %d\n", rand() % max_cores);
-        fprintf(fptr, "%d %d\n", rand() % 20, 0);
+
+        fprintf(fptr, "%d %d\n", rand() % 20, rand() % max_cores);
+
         fprintf(fptr, "\n");
     }
     fclose(fptr);
@@ -154,21 +156,17 @@ void generateJob(int n)
 int main(int argc, char *argv[])
 {
 
-  
     max_cores = 20;
     cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
     free_cores = max_cores;
     printf("---------------------------\n");
     printf("Programa hasi da:\n");
-   
+
     printf("---------------------------\n");
 
- 
     read_jobs();
     printf("---------------------------\n");
     initialize();
-
-   
 
     scheduler();
 

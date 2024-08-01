@@ -73,7 +73,7 @@ void kill_job(struct job job)
 void block_job(struct job *job)
 {
     kill_job(*job);
-    for(int i = 0; i < job_queue[0].num_events; i++)
+    for (int i = 0; i < job_queue[0].num_events; i++)
     {
         job_queue[0].events[i].time_event += event_list[0].eventtime;
     }
@@ -100,7 +100,8 @@ void update_job()
                 printf("ERROR: While taking cores for %d, not enough cores to free\n", job->pid);
                 block_job(job);
                 blocked = 1;
-            }else
+            }
+            else
             {
                 blocked = 0;
                 while (dif > free_cores && num_active_jobs > 0)
@@ -108,7 +109,6 @@ void update_job()
                     kill_job(active_job[num_active_jobs - 1]);
                 }
             }
-
         }
         int i = 0;
         while (dif > 0)
@@ -144,7 +144,7 @@ void checkevent()
         while (event_list[0].eventtime <= 0 && num_event_list > 0)
         {
 
-            if (event_list[0].job.events[event_list[0].eventnum].num_cores == 0)
+            if (event_list[0].eventtime == 0)
             {
 
                 free_job(event_list[0].job, event_list[0].eventnum);
@@ -175,6 +175,9 @@ void insert_job(struct job *insjob)
     active_job[num_active_jobs] = *insjob;
     job = &active_job[num_active_jobs];
     printf("Job %d started\n", active_job[num_active_jobs].pid);
+    printf("Num events: %d\n", num_event_list);
+    printf("Num active jobs: %d\n", num_active_jobs);
+    printf("Active job info: %d\n", active_job[0].pid);
 
     // Actualizar lista job_queue
     for (i = 0; i < num_jobs - 1; i++)
@@ -195,12 +198,13 @@ void insert_job(struct job *insjob)
 
             active_job[num_active_jobs].num_cores++;
             printf("Num cores: %d\n", active_job[num_active_jobs].num_cores);
+
             cores[i].busy = 1;
             core++;
         }
         i++;
     }
-    
+
     free_cores -= active_job[num_active_jobs].num_cores;
 
     // Actualizar lista de eventos del job
@@ -270,6 +274,8 @@ void insert_job(struct job *insjob)
     if (num_event_list != num_active_jobs)
     {
         printf("ERROR: Event list and active jobs are not the same size\n");
+        printf("Event list: %d\n", num_event_list);
+        printf("Active jobs: %d\n", num_active_jobs);
         print_info();
         exit(1);
     }
@@ -291,7 +297,7 @@ void print_info()
     printf("    Event list:\n");
     for (int i = 0; i < num_event_list; i++)
     {
-        printf("    Job %d, event %d, time %d, event jobkop %d\n", event_list[i].job.pid, event_list[i].eventnum, event_list[i].eventtime, event_list[i].job.events[event_list[i].eventnum].num_cores);
+        printf("    Job %d, event %d, time %d, event numcores %d\n", event_list[i].job.pid, event_list[i].eventnum, event_list[i].eventtime, event_list[i].job.events[event_list[i].eventnum].num_cores);
     }
 
     printf("Num jobs: %d\n", num_jobs);
@@ -320,7 +326,6 @@ int scheduler()
         print_info();
 
         ciclototal++;
-        
     }
 
     return 0;
