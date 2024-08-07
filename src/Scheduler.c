@@ -11,8 +11,10 @@ struct job *job;
 void print_info();
 void insert_job(struct job *insjob);
 
+// Termina un trabajo
 void free_job(struct job job, int eventnum)
 {
+    //Liberar los cores del trabajo
     printf("Freeing job : %d\n", job.pid);
     for (int j = 0; j < job.num_cores; j++)
     {
@@ -21,6 +23,7 @@ void free_job(struct job job, int eventnum)
     }
     free_cores += job.num_cores;
     int lag = 0;
+    // Revisa la lista entera, cuando encuetre el trabajo a eliminar actualiza la lista moviendo todo a la izquierda borrando el trabajo
     for (int h = 0; h < num_active_jobs; h++)
     {
         if (active_job[h].pid == job.pid)
@@ -80,14 +83,20 @@ void block_job(struct job *job)
     insert_job(&job_queue[0]);
 }
 
+// Cambia el tamaño de un trabajo.
 void update_job()
 {
+    printf("Updating job: %d \n", event_list[0].job.pid);
     job = &event_list[0].job;
+    // Checkear si el evento tiene que aumetar o disminuir cores 
     if (job->events[event_list[0].eventnum].num_cores > job->num_cores)
     {
+        printf("Adding cores\n");
         int dif = job->events[event_list[0].eventnum].num_cores - job->num_cores;
+        printf("Dif: %d\n", dif);
         if (free_cores < dif)
         {
+            printf("Not enough cores to add\n");
             int lag = num_active_jobs - 1;
             int sum = free_cores;
             while (active_job[lag].pid != job->pid)
@@ -119,14 +128,19 @@ void update_job()
                 job->num_cores++;
                 cores[i].busy = 1;
                 dif--;
+                free_cores--;
             }
             i++;
         }
     }
     else
     {
+        printf("Removing cores\n");
         // Liberar cores
+        printf("Num cores: %d\n", job->num_cores);
+        printf("Event num cores: %d\n", job->events[event_list[0].eventnum].num_cores);
         int dif = job->num_cores - job->events[event_list[0].eventnum].num_cores;
+        printf("Dif: %d\n", dif);
         for (int i = 0; i < dif; i++)
         {
             job->cores[job->num_cores - 1].busy = 0;
@@ -135,18 +149,23 @@ void update_job()
             free_cores++;
         }
     }
+    printf("Job %d updated with %d cores\n", job->pid, active_job[0].num_cores);
 }
 
+
+//Se encarga de ver si algun evento de la lista de eventos ha terminado (el primero)
 void checkevent()
 {
     if (num_event_list > 0)
     {
+        // Se utiliza un while para comprobar varios elementos (como si fuese un if)
         while (event_list[0].eventtime <= 0 && num_event_list > 0)
         {
-
-            if (event_list[0].eventtime == 0)
+            // Para Jon = Aquí has puesto eventime pero aquí hay que mirar si los cores de este cambio son 0 o no, para saber si el trabajo termina o no. f (event_list[0].eventtime == 0)
+           
+            // Liberar el trabajo si el evento tiene 0 cores (se checkea asi porque la lista de eventos de los trabajo no se acutalizan solo el eventnum de la lista de eventos)
+            if (event_list[0].job.events[event_list[0].eventnum].num_cores <= 0)
             {
-
                 free_job(event_list[0].job, event_list[0].eventnum);
             }
             else
@@ -271,27 +290,30 @@ void insert_job(struct job *insjob)
 
     num_active_jobs++;
 
-    if (num_event_list != num_active_jobs)
+    /*if (num_event_list != num_active_jobs)
     {
         printf("ERROR: Event list and active jobs are not the same size\n");
         printf("Event list: %d\n", num_event_list);
         printf("Active jobs: %d\n", num_active_jobs);
         print_info();
         exit(1);
-    }
+    }*/
 
     i = 0;
 }
 
 void print_info()
 {
+    printf("------------------------------------------------------------\n");
+    printf("CICLO: %d\n", ciclototal);
     printf("Free cores: %d\n", free_cores);
 
     printf("Num active jobs: %d\n", num_active_jobs);
     printf("    Active job time:\n");
     for (int i = 0; i < num_active_jobs; i++)
     {
-        printf("    Job %d, time %d\n", active_job[i].pid, active_job[i].events[0].time_event);
+        // esto no se actualiza con el evento actual siempre mostrara el tiempo hasta el primer evento
+        printf("    Job %d, cores %d\n", active_job[i].pid, active_job[i].num_cores);
     }
     printf("Num event list: %d\n", num_event_list);
     printf("    Event list:\n");

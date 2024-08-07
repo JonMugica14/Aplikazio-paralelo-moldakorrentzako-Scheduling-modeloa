@@ -61,7 +61,7 @@ void read_jobs()
 
         int i = 0;
         int j;
-
+        
         while (data != NULL)
         {
             job_queue = (struct job *)realloc(job_queue, (num_jobs + 1) * sizeof(struct job));
@@ -74,7 +74,7 @@ void read_jobs()
 
             tok = strtok(data, " ");
             job_queue[i].pid = atoi(tok);
-
+            
             tok = strtok(NULL, " ");
             job_queue[i].arrival_time = atoi(tok);
 
@@ -90,7 +90,7 @@ void read_jobs()
             while (tok != NULL && j <= job_queue[i].num_events)
             {
                 job_queue[i].events[j].time_event = atoi(tok);
-                tok = strtok(NULL, " ");
+                tok = strtok(NULL, " ");printf("stroktok: %s\n", tok);
                 job_queue[i].events[j].num_cores = atoi(tok);
 
                 data = fgets(ch, MAX_LENGTH, ptr);
@@ -174,7 +174,6 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < num_jobs; i++)
     {
-
         free(job_queue[i].events);
     }
     free(job_queue);
