@@ -40,7 +40,7 @@ extern int blocked;          //Señaliza si hay algun trabajo bloqueado
 
 struct scheduled_events 
 {
-    struct job job;    // El trabajo
+    struct job *job;    // El trabajo
     int eventnum;       // El numero del evento del trabajo
     int eventtime;      // El tiempo que falta para ejecutarlo (Comparado con el anterior)
 };

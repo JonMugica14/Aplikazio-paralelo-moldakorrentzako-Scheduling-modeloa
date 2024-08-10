@@ -87,7 +87,8 @@ void read_jobs()
             tok = strtok(data, " ");
             j = 0;
 
-            while (tok != NULL && j <= job_queue[i].num_events)
+            // Para diferenciar entre el tiempo de entrada y el de eventos
+            while (tok != NULL && j <= job_queue[i].num_events-1)
             {
                 job_queue[i].events[j].time_event = atoi(tok);
                 tok = strtok(NULL, " ");printf("stroktok: %s\n", tok);
