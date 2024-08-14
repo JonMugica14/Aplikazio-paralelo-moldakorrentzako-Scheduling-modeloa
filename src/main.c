@@ -90,8 +90,8 @@ void read_jobs()
             // Para diferenciar entre el tiempo de entrada y el de eventos
             while (tok != NULL && j <= job_queue[i].num_events-1)
             {
-                job_queue[i].events[j].time_event = atoi(tok);
-                tok = strtok(NULL, " ");printf("stroktok: %s\n", tok);
+                job_queue[i].events[j].time_event = atoi(tok);printf("stroktok: %s\n", tok);
+                tok = strtok(NULL, " ");
                 job_queue[i].events[j].num_cores = atoi(tok);
 
                 data = fgets(ch, MAX_LENGTH, ptr);

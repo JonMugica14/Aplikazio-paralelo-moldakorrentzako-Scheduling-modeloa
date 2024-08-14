@@ -59,20 +59,25 @@ void kill_job(struct job job)
     }
     job_queue[0] = job;
     num_jobs++;
-    for (int i = 0; i < num_event_list; i++)
-    {
+    for (int i = num_event_list - 2; i >= 0; i--) // Esto esta porque mirar si el primero es el que se va a borrar no es necesario dado que no hay que sustituirlo por nada
+    {   
+        printf("alsjfklasjflk\n");
         if (event_list[i].job->pid == job.pid)
         {
-            event_list[i + 1].eventtime += event_list[i].eventtime;
+            event_list[i+1].eventtime += event_list[i].eventtime;
             event_list[i] = event_list[i + 1];
-
+            
             for (int j = i; j < num_event_list; j++)
             {
                 event_list[j] = event_list[j + 1];
             }
-            num_event_list--;
+            printf("Event deleted\n");
         }
+       
     }
+    printf("Job killed\n");
+    printf("Num events: %d\n", job.num_events);
+    num_event_list-=job.num_events -1;
     num_active_jobs--;
 }
 
@@ -244,35 +249,43 @@ void insert_job(struct job *insjob)
 
     // Actualizar lista de eventos
     int added_time = event_list[0].eventtime;
-    int j = 0;
+    int j = 0; // J representa en que casilla estamos probando para meter el evento
 
+    // Iterar por cada evento
     for (int i = 1; i <= active_job[num_active_jobs].num_events - 1; i++)
     {
-
+        // Para el caso de que no haya eventos
         if (num_event_list == 0)
         {
             event_list[0].job = &active_job[num_active_jobs];
             event_list[0].eventnum = i;
             event_list[0].eventtime = active_job[num_active_jobs].events[i].time_event;
+            added_time = event_list[0].eventtime;
+            printf("Event time: %d\n", event_list[j].eventtime);
         }
         else
         {
-            j = 0;
-            while (active_job[num_active_jobs].events[i].time_event - added_time >= 0 && j < num_event_list)
-            {
-                j++;
-                if (j != num_event_list - 1)
-                {
-                    added_time += event_list[j].eventtime;
-                }
-                printf("Event time: %d\n", active_job[num_active_jobs].events[i].time_event);
+            //j = 0;
+            // Comprobamos si la casilla actual es más grande que el tiempo del evento para saber si va antes o despues. Ademas miramos si es la ultima casilla o no
+            while (active_job[num_active_jobs].events[i].time_event - added_time >= 0 && j + 1 < num_event_list)
+            {   
+                // Esto Porque?? HACE FALTA EXPLICACIÓN
+                //if (j != num_event_list - 1)
+                printf("num_event_list: %d\n", num_event_list);
+                j++; 
+                added_time += event_list[j].eventtime;
+                printf("Event time added: %d\n", event_list[j].eventtime);
+                printf("Event timeaaa: %d\n", active_job[num_active_jobs].events[i].time_event);
                 printf("Added time: %d\n", added_time);
+                printf("evento: %d\n", i);
                 printf("J: %d\n", j);
                 printf("time_event - added_time: %d\n", active_job[num_active_jobs].events[i].time_event - added_time);
             }
-            if (j < num_event_list)
+            if (j + 1 < num_event_list)
             {
-
+                printf("j: %d\n", j);
+                printf("num_event_list: %d\n", num_event_list);
+                printf("alkajlkfj\n");
                 for (int k = num_event_list; k > j; k--)
                 {
                     event_list[k] = event_list[k - 1];
@@ -280,17 +293,36 @@ void insert_job(struct job *insjob)
 
                 event_list[j].eventtime = active_job[num_active_jobs].events[i].time_event - added_time + event_list[j + 1].eventtime;
                 event_list[j + 1].eventtime -= event_list[j].eventtime;
+                event_list[j].job = &active_job[num_active_jobs];
+                event_list[j].eventnum = i;
             }
             else
             {
-                event_list[j].eventtime = active_job[num_active_jobs].events[i].time_event - added_time;
+                if(active_job[num_active_jobs].events[i].time_event - added_time < 0){
+                    printf("kajkas bat bat\n");
+                    event_list[j+1] = event_list[j];
+                    event_list[j].eventtime = active_job[num_active_jobs].events[i].time_event - added_time;
+                    printf("Event time2: %d\n", event_list[j].eventtime);
+                    added_time += event_list[j].eventtime;
+                    event_list[j].job = &active_job[num_active_jobs];
+                    event_list[j].eventnum = i;
+                }else{
+                    event_list[j+1].eventtime = active_job[num_active_jobs].events[i].time_event - added_time;
+                    printf("Event time2: %d\n", event_list[j+1].eventtime);
+                    added_time += event_list[j+1].eventtime;
+                    event_list[j + 1].job = &active_job[num_active_jobs];
+                    event_list[j + 1].eventnum = i;
+                }
             }
-            event_list[j].job = &active_job[num_active_jobs];
-            event_list[j].eventnum = i;
+            
+            j++;
+            //event_list[j].job = &active_job[num_active_jobs];
+            //event_list[j].eventnum = i;
+            
 
             if (event_list[j].eventtime < 0)
             {
-                printf("ERROR NUMERO NEGATIVO EN TIEMPO DE EVENTO: Job id %d; Job time: %d\n", event_list[j].job->pid, event_list[j].eventtime);
+                printf("ERROR NUMERO NEGATIVO EN TIEMPO DE EVENTO: Job id %d; Evento: %d; Job time: %d\n", event_list[j].job->pid, i, event_list[j].eventtime);
                 exit(1);
             }
         }
