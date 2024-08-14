@@ -115,6 +115,8 @@ void read_jobs()
 
     active_job = (struct job *)malloc(num_jobs * sizeof(struct job));
     event_list = (struct scheduled_events *)malloc(num_jobs * sizeof(struct scheduled_events));
+ 
+    
 
     printf("Num Jobs: %d\n", num_jobs);
 
@@ -141,15 +143,22 @@ void generateJob(int n)
     }
 
     fprintf(fptr, "PID ArrivalTime NumEvents\n");
-
+    int bat = 0;
     for (int i = 1; i <= n; i++)
-    {
-        fprintf(fptr, "%d %d %d\n", i, rand() % 20, 1);
+    {   
+        int num_eventss = rand() % 10;
+        fprintf(fptr, "%d %d %d\n", i, rand() % 20, num_eventss);
         fprintf(fptr, "0 %d\n", rand() % max_cores);
+        for (int i = 1; i < num_eventss-1; i++)
+        {
+           bat+=rand() % 20;
+           fprintf(fptr, "%d %d\n", bat, rand() % (max_cores-1)+1);
+        }
+        bat+=rand() % 20;
+        
+        fprintf(fptr, "%d %d", bat, 0);
 
-        fprintf(fptr, "%d %d\n", rand() % 20, rand() % max_cores);
-
-        fprintf(fptr, "\n");
+        fprintf(fptr, "\n\n");
     }
     fclose(fptr);
 }
@@ -164,7 +173,7 @@ int main(int argc, char *argv[])
     printf("Programa hasi da:\n");
 
     printf("---------------------------\n");
-
+  //  generateJob(5);
     read_jobs();
     printf("---------------------------\n");
     initialize();
@@ -182,6 +191,8 @@ int main(int argc, char *argv[])
     free(cores);
 
     free(active_job);
+    
+    
     free(event_list);
 
     return 0;
