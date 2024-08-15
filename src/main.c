@@ -40,7 +40,7 @@ void initialize()
     {
         cores[i].id = i;
         cores[i].busy = 0;
-        printf("Core: %d, Busy: %d\n", cores[i].id, cores[i].busy);
+       
     }
 }
 
@@ -90,7 +90,7 @@ void read_jobs()
             // Para diferenciar entre el tiempo de entrada y el de eventos
             while (tok != NULL && j <= job_queue[i].num_events-1)
             {
-                job_queue[i].events[j].time_event = atoi(tok);printf("stroktok: %s\n", tok);
+                job_queue[i].events[j].time_event = atoi(tok);
                 tok = strtok(NULL, " ");
                 job_queue[i].events[j].num_cores = atoi(tok);
 
@@ -114,7 +114,7 @@ void read_jobs()
     fclose(ptr);
 
     active_job = (struct job *)malloc(num_jobs * sizeof(struct job));
-    event_list = (struct scheduled_events *)malloc(num_jobs * sizeof(struct scheduled_events));
+    event_list = (struct scheduled_events *)malloc((num_jobs*10) * sizeof(struct scheduled_events));
  
     
 
@@ -145,7 +145,7 @@ void generateJob(int n)
     fprintf(fptr, "PID ArrivalTime NumEvents\n");
     int bat = 0;
     for (int i = 1; i <= n; i++)
-    {   
+    {   bat=0;
         int num_eventss = rand() % 10;
         fprintf(fptr, "%d %d %d\n", i, rand() % 20, num_eventss);
         fprintf(fptr, "0 %d\n", rand() % max_cores);
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
     printf("Programa hasi da:\n");
 
     printf("---------------------------\n");
-  //  generateJob(5);
+   // generateJob(5);
     read_jobs();
     printf("---------------------------\n");
     initialize();
