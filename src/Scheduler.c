@@ -339,7 +339,7 @@ void print_info()
 {
     printf("------------------------------------------------------------\n");
     printf("CICLO: %d\n", ciclototal);
-    printf("Free cores: %d\n", free_cores);
+    printf("Cores libres: %d\n", free_cores);
 
     printf("Num active jobs: %d\n", num_active_jobs);
     printf("    Active job time:\n");
