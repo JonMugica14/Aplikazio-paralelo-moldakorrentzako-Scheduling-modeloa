@@ -14,6 +14,7 @@
 
 int num_cores;
 int num_jobs;
+int ema;
 struct cores *cores;
 struct job *job_queue = NULL;
 struct job *lagun;
@@ -243,6 +244,7 @@ int main(int argc, char *argv[])
 
     printf("---------------------------\n");
     printf("Maleable\n");
+    ema=1;
     generateJob(5);
     read_jobs(0);
 
@@ -267,6 +269,7 @@ int main(int argc, char *argv[])
     printf("---------------------------\n");
     printf("No maleable\n");
     printf("---------------------------\n");
+    ema=0;
     ciclototal=0;
     serial(1);
 

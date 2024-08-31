@@ -361,6 +361,7 @@ void print_info()
 int bukatzeko = 0;
 int scheduler()
 {
+    if(ema==1)
     fptr = fopen("emaitza.txt", "w");
     while (1)
     {
@@ -373,6 +374,7 @@ int scheduler()
         denb++;
 
         checkevent();
+        if(ema==1)
         kalk_erabilpena();
 
         if (num_jobs == 0 && num_active_jobs <= 0)
@@ -380,6 +382,7 @@ int scheduler()
             printf("Num active jobs: %d\n", num_active_jobs);
             printf("All jobs completed\n");
             bukatzeko = 1;
+            if(ema==1)
             emaitza_lortu();
             break;
         }
@@ -389,6 +392,7 @@ int scheduler()
         ciclototal++;
         //usleep(10000);
     }
+    if(ema==1)
     fclose(fptr);
     return 0;
 }

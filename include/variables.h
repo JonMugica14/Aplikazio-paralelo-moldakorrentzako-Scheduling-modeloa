@@ -47,3 +47,4 @@ struct scheduled_events
 
 extern struct scheduled_events *event_list; // Lista de eventos a futuro
 extern int num_event_list;
+extern int ema;
