@@ -214,15 +214,15 @@ void generateJob(int n)
     for (int i = 1; i <= n; i++)
     {
         bat = 0;
-        int num_eventss = rand() % 10;
+        int num_eventss = rand() % 8 +2;
         fprintf(fptr, "%d %d %d\n", i, rand() % 20, num_eventss);
-        fprintf(fptr, "0 %d\n", rand() % max_cores);
+        fprintf(fptr, "0 %d\n", rand() % (max_cores-1)+1);
         for (int i = 1; i < num_eventss - 1; i++)
         {
             bat += rand() % 20;
             fprintf(fptr, "%d %d\n", bat, rand() % (max_cores - 1) + 1);
         }
-        bat += rand() % 20;
+        bat += ((rand() % 20)+1);
 
         fprintf(fptr, "%d %d", bat, 0);
         if (i != n)
@@ -245,7 +245,8 @@ int main(int argc, char *argv[])
     printf("---------------------------\n");
     printf("Maleable\n");
     ema=1;
-    generateJob(5);
+    srand(time(NULL));
+    //generateJob(15);
     read_jobs(0);
 
     printf("---------------------------\n");
@@ -265,7 +266,8 @@ int main(int argc, char *argv[])
 
     free(active_job);
 
-    free(event_list);
+    free(event_list);/*
+    
     printf("---------------------------\n");
     printf("No maleable\n");
     printf("---------------------------\n");
@@ -321,6 +323,6 @@ int main(int argc, char *argv[])
     free(active_job);
 
     free(event_list);
-    
+    */
     return 0;
 }

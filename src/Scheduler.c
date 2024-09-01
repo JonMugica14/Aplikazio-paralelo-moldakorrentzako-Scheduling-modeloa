@@ -39,11 +39,12 @@ void free_job(struct job job, int eventnum)
         if (active_job[h].pid == job.pid)
         {
             lag++;
-            active_job[h] = active_job[h + 1];
+            
         }
         if (lag)
         {
             active_job[h] = active_job[h + 1];
+            
             for (int i = 0; i < num_event_list; i++)
             {
                 if (event_list[i].job->pid == active_job[h].pid)
@@ -51,6 +52,7 @@ void free_job(struct job job, int eventnum)
                     event_list[i].job = &active_job[h];
                 }
             }
+            
         }
     }
     num_active_jobs--;
@@ -75,39 +77,82 @@ void kill_job(struct job job)
     }
     job_queue[0] = job;
     num_jobs++;
+    int kont=0;
+    
+    
+
     for (int i = num_event_list - 2; i >= 0; i--)
     {
 
         if (event_list[i].job->pid == job.pid)
         {
+            printf("AAAAAAAAAAAAAAAAAA\n");
+            printf("%d\n", job.pid);
             event_list[i + 1].eventtime += event_list[i].eventtime;
             event_list[i] = event_list[i + 1];
 
-            for (int j = i; j < num_event_list; j++)
+            for (int j = i; j < num_event_list-1; j++)
             {
                 event_list[j] = event_list[j + 1];
             }
+            num_event_list--;
+             kont++;
         }
     }
+    if (event_list[num_event_list-1].job->pid==job.pid)
+    {
+        printf("JNFDANFFJDO\n");
+        printf("%d\n",event_list[num_event_list-1].job->events[event_list[num_event_list-1].eventnum].num_cores);
+        num_event_list--;
+        kont++;
+    }
+    printf("Kont:%d\n", kont);
     printf("Job killed\n");
 
-    num_event_list -= job.num_events - 1;
+
+
     num_active_jobs--;
 }
 
 void block_job(struct job *job)
 {
     kill_job(*job);
+    int aurk=0;
+
+    for (int i = 0; i < num_jobs; i++)
+    {
+        if (active_job[i].pid==job->pid)
+        {
+            aurk=1;
+        }
+        if (aurk==1)
+        {
+            active_job[i]= active_job[i+1];
+            for (int j = 0; j < num_event_list; j++)
+            {
+                if (event_list[j].job->pid == active_job[i].pid)
+                {
+                    event_list[j].job = &active_job[i];
+                }
+            }
+        }
+        
+        
+    }
+
+    
     for (int i = 0; i < job_queue[0].num_events; i++)
     {
-        job_queue[0].events[i].time_event += event_list[1].eventtime;
+        job_queue[0].events[i].time_event += event_list[0].eventtime;
     }
 }
 
 // Cambia el tamaño de un trabajo.
 void update_job(struct job *job, int eventnum)
 {
-    printf("Updating job: %d \n", event_list[0].job->pid);
+
+    int adding =0;
+    printf("Updating job: %d \n", job->pid);
 
     // Checkear si el evento tiene que aumentar o disminuir cores
     if (job->events[eventnum].num_cores > job->num_cores)
@@ -129,6 +174,7 @@ void update_job(struct job *job, int eventnum)
             {
                 printf("ERROR: While taking cores for %d, not enough cores to free\n", job->pid);
                 block_job(job);
+                adding=1;
             }
             else
             {
@@ -138,8 +184,10 @@ void update_job(struct job *job, int eventnum)
 
                     kill_job(active_job[num_active_jobs - 1]);
                 }
+
             }
         }
+        if(adding==0){
         int i = 0;
         while (dif > 0)
         {
@@ -153,6 +201,7 @@ void update_job(struct job *job, int eventnum)
             }
             i++;
         }
+        }
     }
     else
     {
@@ -160,14 +209,24 @@ void update_job(struct job *job, int eventnum)
         // Liberar cores
 
         int dif = job->num_cores - job->events[eventnum].num_cores;
+        int pos=0;
+        while (active_job[pos].pid!=job->pid)
+        {
+            pos++;
+            
+        }
+        
 
         for (int i = 0; i < dif; i++)
         {
-            job->cores[job->num_cores - 1].busy = 0;
-            cores[job->cores[job->num_cores - 1].id].busy = 0;
-            job->num_cores--;
+            active_job[pos].cores[active_job[pos].num_cores - 1].busy = 0;
+            cores[active_job[pos].cores[active_job[pos].num_cores - 1].id].busy = 0;
+            active_job[pos].num_cores--;
             free_cores++;
         }
+        
+        printf("COMREAREA:%d\n", job->num_cores);
+        printf("COAM;CODSMFO:%d\n", active_job[0].num_cores);
     }
     printf("Job %d updated with %d cores\n", job->pid, active_job[0].num_cores);
 }
@@ -199,6 +258,7 @@ void checkevent()
                 update_job(a.job, a.eventnum);
             }
         }
+       
         if (num_event_list > 0)
             event_list[0].eventtime--;
     }
@@ -213,8 +273,15 @@ void insert_job(struct job *insjob)
 
     active_job[num_active_jobs] = *insjob;
 
-    printf("Job %d started\n", active_job[num_active_jobs].pid);
 
+    printf("Job %d started\n", active_job[num_active_jobs].pid);
+   
+    for (int i = 0; i < active_job[num_active_jobs].num_events; i++)
+    {
+        printf("%d: %d, %d\n", i, active_job[num_active_jobs].events[i].time_event,active_job[num_active_jobs].events[i].num_cores );
+        
+    }
+    
     // Actualizar lista job_queue
 
     // Asigna cores
@@ -280,9 +347,11 @@ void insert_job(struct job *insjob)
                 {
                     event_list[k] = event_list[k - 1];
                 }
-
+                printf("ADEDD:%d\n", added_time);
+                printf("NEXTTTT:%d\n", event_list[j+1].eventtime);
+                printf("MAMAMAMAAMAMMA:%d\n", active_job[num_active_jobs].events[i].time_event - added_time + event_list[j + 1].eventtime);
                 event_list[j].eventtime = active_job[num_active_jobs].events[i].time_event - added_time + event_list[j + 1].eventtime;
-                added_time += event_list[j].eventtime;
+                //added_time += event_list[j].eventtime;
                 event_list[j + 1].eventtime -= event_list[j].eventtime;
                 event_list[j].job = &active_job[num_active_jobs];
                 event_list[j].eventnum = i;
@@ -296,7 +365,8 @@ void insert_job(struct job *insjob)
                     event_list[j + 1] = event_list[j];
                     event_list[j].eventtime = active_job[num_active_jobs].events[i].time_event - added_time + event_list[j + 1].eventtime;
 
-                    added_time += event_list[j].eventtime;
+                  //  added_time += event_list[j].eventtime;
+                     event_list[j + 1].eventtime -= event_list[j].eventtime;
                     event_list[j].job = &active_job[num_active_jobs];
                     event_list[j].eventnum = i;
                 }
@@ -305,7 +375,7 @@ void insert_job(struct job *insjob)
 
                     event_list[j + 1].eventtime = active_job[num_active_jobs].events[i].time_event - added_time;
 
-                    added_time += event_list[j + 1].eventtime;
+                   // added_time += event_list[j + 1].eventtime;
 
                     event_list[j + 1].job = &active_job[num_active_jobs];
 
@@ -390,7 +460,8 @@ int scheduler()
         print_info();
 
         ciclototal++;
-        //usleep(10000);
+       // if(ciclototal==98) exit(0);
+        usleep(10000);
     }
     if(ema==1)
     fclose(fptr);
