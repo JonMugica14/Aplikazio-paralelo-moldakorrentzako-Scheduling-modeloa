@@ -5,15 +5,14 @@
 #include <string.h>
 #include "../include/variables.h"
 #include "../include/Scheduler.h"
-#include "../include/Cores.h"
 
 struct job *job;
-float bat_event=0;
-float nodo_erabilpena=0;
-int gertaera_ziklo=0;
-int gertaera_kopurua=0;
+float bat_event = 0;
+float nodo_erabilpena = 0;
+int gertaera_ziklo = 0;
+int gertaera_kopurua = 0;
 FILE *fptr;
-    
+
 void print_info();
 void insert_job(struct job *insjob);
 void kalk_erabilpena();
@@ -23,7 +22,7 @@ void emaitza_lortu();
 void free_job(struct job job, int eventnum)
 {
     // Liberar los cores del trabajo
-  //  printf("Freeing job : %d\n", job.pid);
+    printf("Freeing job : %d\n", job.pid);
 
     for (int j = 0; j < job.num_cores; j++)
     {
@@ -39,12 +38,11 @@ void free_job(struct job job, int eventnum)
         if (active_job[h].pid == job.pid)
         {
             lag++;
-            
         }
         if (lag)
         {
             active_job[h] = active_job[h + 1];
-            
+
             for (int i = 0; i < num_event_list; i++)
             {
                 if (event_list[i].job->pid == active_job[h].pid)
@@ -52,7 +50,6 @@ void free_job(struct job job, int eventnum)
                     event_list[i].job = &active_job[h];
                 }
             }
-            
         }
     }
     num_active_jobs--;
@@ -61,7 +58,7 @@ void free_job(struct job job, int eventnum)
 // Mata un trabajo activo pero no terminado para hacer hueco para uno más importante
 void kill_job(struct job job)
 {
-  //  printf("Killing job: %d\n", job.pid);
+    printf("Killing job: %d\n", job.pid);
 
     for (int i = 0; i < job.num_cores; i++)
     {
@@ -77,9 +74,7 @@ void kill_job(struct job job)
     }
     job_queue[0] = job;
     num_jobs++;
-    int kont=0;
-    
-    
+    int kont = 0;
 
     for (int i = num_event_list - 2; i >= 0; i--)
     {
@@ -88,26 +83,23 @@ void kill_job(struct job job)
         {
 
             event_list[i + 1].eventtime += event_list[i].eventtime;
-            
 
-            for (int j = i; j < num_event_list-1; j++)
+            for (int j = i; j < num_event_list - 1; j++)
             {
                 event_list[j] = event_list[j + 1];
             }
             num_event_list--;
-             kont++;
+            kont++;
         }
     }
-    if (event_list[num_event_list-1].job->pid==job.pid)
+    if (event_list[num_event_list - 1].job->pid == job.pid)
     {
-  
+
         num_event_list--;
         kont++;
     }
 
-  //  printf("Job killed\n");
-
-
+    printf("Job killed\n");
 
     num_active_jobs--;
 }
@@ -115,17 +107,17 @@ void kill_job(struct job job)
 void block_job(struct job *job)
 {
     kill_job(*job);
-    int aurk=0;
+    int aurk = 0;
 
     for (int i = 0; i < num_active_jobs; i++)
     {
-        if (active_job[i].pid==job->pid)
+        if (active_job[i].pid == job->pid)
         {
-            aurk=1;
+            aurk = 1;
         }
-        if (aurk==1)
+        if (aurk == 1)
         {
-            active_job[i]= active_job[i+1];
+            active_job[i] = active_job[i + 1];
             for (int j = 0; j < num_event_list; j++)
             {
                 if (event_list[j].job->pid == active_job[i].pid)
@@ -134,11 +126,8 @@ void block_job(struct job *job)
                 }
             }
         }
-        
-        
     }
 
-    
     for (int i = 0; i < job_queue[0].num_events; i++)
     {
         job_queue[0].events[i].time_event += event_list[0].eventtime;
@@ -149,18 +138,18 @@ void block_job(struct job *job)
 void update_job(struct job *job, int eventnum)
 {
 
-    int adding =0;
-   // printf("Updating job: %d \n", job->pid);
+    int adding = 0;
+    printf("Updating job: %d \n", job->pid);
 
     // Checkear si el evento tiene que aumentar o disminuir cores
     if (job->events[eventnum].num_cores > job->num_cores)
     {
-    //    printf("Adding cores\n");
+        printf("Adding cores\n");
         int dif = job->events[eventnum].num_cores - job->num_cores;
 
         if (free_cores < dif)
         {
-        //    printf("Not enough cores to add\n");
+            printf("Not enough cores to add\n");
             int lag = num_active_jobs - 1;
             int sum = free_cores;
             while (active_job[lag].pid != job->pid && lag > 0)
@@ -170,9 +159,9 @@ void update_job(struct job *job, int eventnum)
             }
             if (sum < dif)
             {
-               // printf("ERROR: While taking cores for %d, not enough cores to free\n", job->pid);
+                printf("ERROR: While taking cores for %d, not enough cores to free\n", job->pid);
                 block_job(job);
-                adding=1;
+                adding = 1;
             }
             else
             {
@@ -182,39 +171,36 @@ void update_job(struct job *job, int eventnum)
 
                     kill_job(active_job[num_active_jobs - 1]);
                 }
-
             }
         }
-        if(adding==0){
-        int i = 0;
-        while (dif > 0)
+        if (adding == 0)
         {
-            if (cores[i].busy == 0)
+            int i = 0;
+            while (dif > 0)
             {
-                job->cores[job->num_cores] = cores[i];
-                job->num_cores++;
-                cores[i].busy = 1;
-                dif--;
-                free_cores--;
+                if (cores[i].busy == 0)
+                {
+                    job->cores[job->num_cores] = cores[i];
+                    job->num_cores++;
+                    cores[i].busy = 1;
+                    dif--;
+                    free_cores--;
+                }
+                i++;
             }
-            i++;
         }
-        }
-        
     }
     else
     {
-     //   printf("Removing cores\n");
+        printf("Removing cores\n");
         // Liberar cores
 
         int dif = job->num_cores - job->events[eventnum].num_cores;
-        int pos=0;
-        while (active_job[pos].pid!=job->pid)
+        int pos = 0;
+        while (active_job[pos].pid != job->pid)
         {
             pos++;
-            
         }
-        
 
         for (int i = 0; i < dif; i++)
         {
@@ -223,10 +209,8 @@ void update_job(struct job *job, int eventnum)
             active_job[pos].num_cores--;
             free_cores++;
         }
-        
-        
     }
-    //printf("Job %d updated with %d cores\n", job->pid, active_job[0].num_cores);
+    printf("Job %d updated with %d cores\n", job->pid, active_job[0].num_cores);
 }
 
 // Se encarga de ver si algun evento de la lista de eventos ha terminado (el primero)
@@ -256,7 +240,7 @@ void checkevent()
                 update_job(a.job, a.eventnum);
             }
         }
-       
+
         if (num_event_list > 0)
             event_list[0].eventtime--;
     }
@@ -269,19 +253,10 @@ void insert_job(struct job *insjob)
     int i = 0;
     int core = 0;
 
-    
-
-    
-    
     active_job[num_active_jobs] = *insjob;
-  
 
-    //printf("Job %d started\n", active_job[num_active_jobs].pid);
-   
-    
+    printf("Job %d started\n", active_job[num_active_jobs].pid);
 
-     
-    
     // Actualizar lista job_queue
 
     // Asigna cores
@@ -307,8 +282,6 @@ void insert_job(struct job *insjob)
 
     free_cores -= active_job[num_active_jobs].num_cores;
 
-   
-
     // Actualizar lista de eventos del job
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -332,9 +305,7 @@ void insert_job(struct job *insjob)
         }
         else
         {
-            
 
-            // j = 0;
             //  Comprobamos si la casilla actual es más grande que el tiempo del evento para saber si va antes o despues. Ademas miramos si es la ultima casilla o no
             while (active_job[num_active_jobs].events[i].time_event - added_time >= 0 && j + 1 < num_event_list)
             {
@@ -342,7 +313,7 @@ void insert_job(struct job *insjob)
                 j++;
                 added_time += event_list[j].eventtime;
             }
-             
+
             if (j + 1 < num_event_list)
             {
 
@@ -350,9 +321,9 @@ void insert_job(struct job *insjob)
                 {
                     event_list[k] = event_list[k - 1];
                 }
-               
+
                 event_list[j].eventtime = active_job[num_active_jobs].events[i].time_event - added_time + event_list[j + 1].eventtime;
-              
+
                 event_list[j + 1].eventtime -= event_list[j].eventtime;
                 event_list[j].job = &active_job[num_active_jobs];
                 event_list[j].eventnum = i;
@@ -366,16 +337,14 @@ void insert_job(struct job *insjob)
                     event_list[j + 1] = event_list[j];
                     event_list[j].eventtime = active_job[num_active_jobs].events[i].time_event - added_time + event_list[j + 1].eventtime;
 
-                 
-                     event_list[j + 1].eventtime -= event_list[j].eventtime;
+                    event_list[j + 1].eventtime -= event_list[j].eventtime;
                     event_list[j].job = &active_job[num_active_jobs];
                     event_list[j].eventnum = i;
                 }
                 else
                 {
-
                     event_list[j + 1].eventtime = active_job[num_active_jobs].events[i].time_event - added_time;
-
+                    added_time += event_list[j + 1].eventtime;
                     event_list[j + 1].job = &active_job[num_active_jobs];
 
                     event_list[j + 1].eventnum = i;
@@ -386,7 +355,7 @@ void insert_job(struct job *insjob)
 
             if (event_list[j].eventtime < 0)
             {
-               // printf("ERROR NUMERO NEGATIVO EN TIEMPO DE EVENTO: Job id %d; Evento: %d; Job time: %d\n", event_list[j].job->pid, i, event_list[j].eventtime);
+                printf("ERROR NUMERO NEGATIVO EN TIEMPO DE EVENTO: Job id %d; Evento: %d; Job time: %d\n", event_list[j].job->pid, i, event_list[j].eventtime);
                 exit(1);
             }
         }
@@ -430,8 +399,9 @@ void print_info()
 int bukatzeko = 0;
 int scheduler()
 {
-    if(ema==1)
-    fptr = fopen("emaitza.txt", "w");
+
+    if (ema == 1)
+        fptr = fopen("emaitza.txt", "w");
     while (1)
     {
 
@@ -443,70 +413,63 @@ int scheduler()
         denb++;
 
         checkevent();
-        if(ema==1)
-        kalk_erabilpena();
+        if (ema == 1)
+            kalk_erabilpena();
 
         if (num_jobs == 0 && num_active_jobs <= 0)
         {
-            
-           // printf("All jobs completed\n");
+
+            printf("All jobs completed\n");
             bukatzeko = 1;
-            if(ema==1)
-            emaitza_lortu();
+            if (ema == 1)
+                emaitza_lortu();
             break;
         }
 
-      //  print_info();
+        print_info();
 
         ciclototal++;
-        //if(ciclototal==549) exit(0);
-      //  usleep(10000);
     }
-    if(ema==1)
-    fclose(fptr);
+    if (ema == 1)
+        fclose(fptr);
     return 0;
 }
 
 void kalk_erabilpena()
 {
-    
-    if (nodo_erabilpena!=(max_cores-free_cores))
+
+    if (nodo_erabilpena != (max_cores - free_cores))
     {
-        bat_event+=nodo_erabilpena*gertaera_ziklo;
-       
+        bat_event += nodo_erabilpena * gertaera_ziklo;
+
         emaitza_lortu();
-        nodo_erabilpena=max_cores-free_cores;
-        
-        gertaera_ziklo=0;
+        nodo_erabilpena = max_cores - free_cores;
+
+        gertaera_ziklo = 0;
         gertaera_kopurua++;
-        
-    }else
+    }
+    else
     {
         gertaera_ziklo++;
     }
-
-
 }
 
 void emaitza_lortu()
 {
-
-    
 
     if (fptr == NULL)
     {
         printf("Errorea fitxategia sortzean\n");
         exit(1);
     }
-    if(bukatzeko==1){
+    if (bukatzeko == 1)
+    {
 
-        fprintf(fptr, "Emaitza: %f", bat_event/(ciclototal*max_cores));
-        printf("Emaitza: %f", bat_event/(ciclototal*max_cores));
-        
-    }else{
-    fprintf(fptr, "%f\n\n", nodo_erabilpena/max_cores);
+        fprintf(fptr, "Emaitza: %f", bat_event / (ciclototal * max_cores));
+        printf("Emaitza: %f\n", bat_event / (ciclototal * max_cores));
     }
-
-
- 
+    else
+    {
+        fprintf(fptr, "%f\n\n", nodo_erabilpena / max_cores);
+    }
 }

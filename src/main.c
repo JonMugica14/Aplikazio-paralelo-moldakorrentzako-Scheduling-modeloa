@@ -6,7 +6,6 @@
 #include <string.h>
 #include "../include/variables.h"
 #include "../include/Scheduler.h"
-#include "../include/Cores.h"
 
 #define MAX_LENGTH 512
 
@@ -63,7 +62,7 @@ void serial(int paralell, int n)
 
     while (data != NULL)
     {
-       
+
         tok = strtok(data, " ");
 
         a = atoi(tok);
@@ -76,35 +75,36 @@ void serial(int paralell, int n)
         data = fgets(ch, MAX_LENGTH, fptr);
         tok = strtok(data, " ");
         int i = 0;
-        int j=0;
+
         int sum = 0;
-        int cores=max_cores;
-        int max=0;
-        while (tok != NULL   && i <= events_num - 1 )
+        int fij = 0;
+
+        int max = 0;
+        while (tok != NULL && i <= events_num - 1)
         {
 
             sum += atoi(tok);
+            fij = atoi(tok);
             i++;
             tok = strtok(NULL, " ");
-            
-                if(max<atoi(tok))
-                max=atoi(tok);
-                
-            
+
+            if (max < atoi(tok))
+                max = atoi(tok);
+
             fgets(ch, MAX_LENGTH, fptr);
             tok = strtok(ch, " ");
         }
-       if(paralell==0) max=max_cores;
+        if (paralell == 0)
+            max = max_cores;
         fprintf(fptrs, "%d %d\n", 0, max);
-        fprintf(fptrs, "%d %d", sum, 0);
-         
+        fprintf(fptrs, "%d %d", fij, 0);
+
         if (a != n)
         {
             fprintf(fptrs, "\n\n");
         }
-       
+
         data = fgets(ch, MAX_LENGTH, fptr);
-        
     }
 
     fclose(fptrs);
@@ -114,9 +114,11 @@ void read_jobs(int file)
 {
     if (file == 0)
         ptr = fopen("jobs.txt", "r");
-    else if (file == 1){
-        
-        ptr = fopen("serial.txt", "r");}
+    else if (file == 1)
+    {
+
+        ptr = fopen("serial.txt", "r");
+    }
     if (ptr == NULL)
     {
         printf("Fitxategia irakurtzen errore bat gertatu da\n");
@@ -124,33 +126,30 @@ void read_jobs(int file)
     }
     else
     {
-        
-    
 
         data = fgets(ch, MAX_LENGTH, ptr);
-    
+
         data = fgets(ch, MAX_LENGTH, ptr);
         int i = 0;
         int j;
-        num_jobs=0;
-        while (data != NULL && strlen(data)!=0)
+        num_jobs = 0;
+        while (data != NULL && strlen(data) != 0)
         {
             num_jobs++;
             job_queue = (struct job *)realloc(job_queue, (num_jobs) * sizeof(struct job));
-            
+
             if (job_queue == NULL)
             {
                 printf("Errore bat gertatu da realloc erabiliz\n");
                 exit(1);
             }
-            
-            
+
             tok = strtok(data, " ");
             job_queue[i].pid = atoi(tok);
             tok = strtok(NULL, " ");
-            
+
             job_queue[i].arrival_time = atoi(tok);
-                        
+
             tok = strtok(NULL, " ");
             job_queue[i].num_events = atoi(tok);
             job_queue[i].events = (struct event *)malloc(job_queue[i].num_events * sizeof(struct event));
@@ -175,20 +174,18 @@ void read_jobs(int file)
                 data = fgets(ch, MAX_LENGTH, ptr);
 
                 tok = strtok(data, " ");
-            
+
                 j++;
             }
             data = fgets(ch, MAX_LENGTH, ptr);
             i++;
-            
         }
-        
     }
 
     for (int i = 0; i < num_jobs; i++)
     {
         job_queue[i].cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
-         if (job_queue[i].cores == NULL)
+        if (job_queue[i].cores == NULL)
         {
             printf("Errore bat gertatu da malloc erabiliz\n");
             exit(1);
@@ -198,18 +195,17 @@ void read_jobs(int file)
     fclose(ptr);
 
     active_job = (struct job *)malloc(num_jobs * sizeof(struct job));
-     if (active_job == NULL)
+    if (active_job == NULL)
     {
         printf("Errore bat gertatu da malloc erabiliz\n");
         exit(1);
     }
     event_list = (struct scheduled_events *)malloc((num_jobs * 10) * sizeof(struct scheduled_events));
-     if (event_list == NULL)
+    if (event_list == NULL)
     {
         printf("Errore bat gertatu da malloc erabiliz\n");
         exit(1);
     }
-  //  printf("Num Jobs: %d\n", num_jobs);
 
     for (int i = 0; i < num_jobs; i++)
     {
@@ -224,8 +220,8 @@ void read_jobs(int file)
             active_job[i].cores[j].id = -1;
         }
     }
-    
-    //    printf("Lectura de archivo correcta\n");
+
+    printf("Lectura de archivo correcta\n");
 }
 
 void generateJob(int n)
@@ -245,15 +241,15 @@ void generateJob(int n)
     for (int i = 1; i <= n; i++)
     {
         bat = 0;
-        int num_eventss = rand() % 8 +2;
+        int num_eventss = rand() % 8 + 2;
         fprintf(fptr, "%d %d %d\n", i, rand() % 20, num_eventss);
-        fprintf(fptr, "0 %d\n", rand() % (max_cores-1)+1);
+        fprintf(fptr, "0 %d\n", rand() % (max_cores - 1) + 1);
         for (int i = 1; i < num_eventss - 1; i++)
         {
-            bat += rand() % 20;
+            bat += ((rand() % 20) + 1);
             fprintf(fptr, "%d %d\n", bat, rand() % (max_cores - 1) + 1);
         }
-        bat += ((rand() % 20)+1);
+        bat += ((rand() % 20) + 1);
 
         fprintf(fptr, "%d %d", bat, 0);
         if (i != n)
@@ -266,80 +262,81 @@ void generateJob(int n)
 
 int main(int argc, char *argv[])
 {
-    int ziklo_par_mal, ziklo_par, ziklo_ser;
+
     max_cores = 20;
     cores = (struct cores *)malloc(max_cores * sizeof(struct cores));
     free_cores = max_cores;
     printf("---------------------------\n");
     printf("Comienza el simulador:\n");
 
-    
-    ema=1;
-    int generate=atoi(argv[1]);
-    int mode=atoi(argv[2]);
-    
-    
-   // generate=50;
-    printf("%d", atoi(argv[2]));
-if(atoi(argv[2])==0){
-    srand(time(NULL));
-    printf(";MASFMMFAKFMSKFM\n");
-    generateJob(generate);
-}
-    if(mode==1){
+    ema = 1;
+    int generate = atoi(argv[1]);
+    int mode = atoi(argv[2]);
 
-    printf("---------------------------\n");
-    printf("No maleable\n");
-    printf("---------------------------\n");
-    ema=1;
-    ciclototal=0;
-    serial(1, generate);
+    if (atoi(argv[2]) == 0)
+    {
+        srand(time(NULL));
 
-    read_jobs(1);
-    
-    initialize();
-    scheduler();
-
-    }else if(mode==2){
-
- printf("---------------------------\n");
-    printf("Serie\n");
-    printf("---------------------------\n");
-    ema=1;
-    ciclototal=0;
-    serial(0, generate);
-
-    read_jobs(1);
-    
-    initialize();
-    scheduler();
-
-    }else{
-
-    printf("---------------------------\n");
-    printf("Maleable\n");
-    printf("---------------------------\n");
-    ema=1;
- read_jobs(0);
-    
-    initialize();
-    scheduler();
-
+        generateJob(generate);
     }
-    
-    
-   
+    if (mode == 1)
+    {
+
+        printf("---------------------------\n");
+        printf("No maleable\n");
+        printf("---------------------------\n");
+        ema = 1;
+        ciclototal = 0;
+
+        serial(1, generate);
+
+        read_jobs(1);
+
+        initialize();
+
+        scheduler();
+    }
+    else if (mode == 2)
+    {
+
+        printf("---------------------------\n");
+        printf("Serie\n");
+        printf("---------------------------\n");
+        ema = 1;
+        ciclototal = 0;
+        serial(0, generate);
+
+        read_jobs(1);
+
+        initialize();
+        scheduler();
+    }
+    else
+    {
+
+        printf("---------------------------\n");
+        printf("Maleable\n");
+        printf("---------------------------\n");
+        ema = 1;
+        read_jobs(0);
+
+        initialize();
+
+        scheduler();
+    }
+
     printf("Ciclos totales: %d\n", ciclototal);
-    ziklo_par_mal=ciclototal;
+
     printf("\n\n\n\n\n");
-    
+
     for (int i = 0; i < num_jobs; i++)
     {
         free(job_queue[i].events);
     }
 
-     for (int i = 0; i < num_jobs; i++)
-    { free(active_job[i].cores);
+    for (int i = 0; i < num_jobs; i++)
+    {
+        free(active_job[i].cores);
     }
     free(job_queue);
 
@@ -348,62 +345,6 @@ if(atoi(argv[2])==0){
     free(active_job);
 
     free(event_list);
-    /*
-    printf("---------------------------\n");
-    printf("No maleable\n");
-    printf("---------------------------\n");
-    ema=0;
-    ciclototal=0;
-    serial(1, generate);
 
-    read_jobs(1);
-    
-    initialize();
-    scheduler();
-   
-    printf("Ciclos totales: %d\n", ciclototal);
-    ziklo_par=ciclototal;
-    for (int i = 0; i < num_jobs; i++)
-    {
-        free(job_queue[i].events);
-    }
-    free(job_queue);
-
-    free(cores);
-
-    free(active_job);
-
-    free(event_list);
-     printf("---------------------------\n");
-    printf("Serie\n");
-    printf("---------------------------\n");
-    ciclototal=0;
-    serial(0, generate);
-
-    read_jobs(1);
-    
-    initialize();
-    scheduler();
-   
-    printf("Ciclos totales: %d\n", ciclototal);
-    ziklo_ser=ciclototal;
-    printf("---------------------------\n");
-    printf("Estos han sido los resultados de la simulación:\n");
-    printf("Maleable:%d\n", ziklo_par_mal);
-    printf("No maleable:%d\n", ziklo_par);
-    printf("Serie:%d\n", ziklo_ser);
-    printf("---------------------------\n");
-    for (int i = 0; i < num_jobs; i++)
-    {
-        free(job_queue[i].events);
-    }
-    free(job_queue);
-
-    free(cores);
-
-    free(active_job);
-
-    free(event_list);
-    */
     return 0;
 }
