@@ -86,10 +86,9 @@ void kill_job(struct job job)
 
         if (event_list[i].job->pid == job.pid)
         {
-            printf("AAAAAAAAAAAAAAAAAA\n");
-            printf("%d\n", job.pid);
+
             event_list[i + 1].eventtime += event_list[i].eventtime;
-            event_list[i] = event_list[i + 1];
+            
 
             for (int j = i; j < num_event_list-1; j++)
             {
@@ -119,7 +118,7 @@ void block_job(struct job *job)
     kill_job(*job);
     int aurk=0;
 
-    for (int i = 0; i < num_jobs; i++)
+    for (int i = 0; i < num_active_jobs; i++)
     {
         if (active_job[i].pid==job->pid)
         {
@@ -139,7 +138,7 @@ void block_job(struct job *job)
         
         
     }
-
+    printf("ACTIVE:%d\n", active_job[num_active_jobs].pid);
     
     for (int i = 0; i < job_queue[0].num_events; i++)
     {
@@ -202,6 +201,7 @@ void update_job(struct job *job, int eventnum)
             i++;
         }
         }
+        
     }
     else
     {
@@ -271,8 +271,15 @@ void insert_job(struct job *insjob)
     int i = 0;
     int core = 0;
 
+    
+    printf("MYPID:::%d\n",active_job[num_active_jobs].pid);
+    
+    
     active_job[num_active_jobs] = *insjob;
-
+     printf("Num_active_jobs:%d\n", num_active_jobs);
+printf("+++++++++++++++++++++++++++++++++++++++\n");
+                print_info();
+      printf("+++++++++++++++++++++++++++++++++++++++\n");
 
     printf("Job %d started\n", active_job[num_active_jobs].pid);
    
@@ -281,6 +288,8 @@ void insert_job(struct job *insjob)
         printf("%d: %d, %d\n", i, active_job[num_active_jobs].events[i].time_event,active_job[num_active_jobs].events[i].num_cores );
         
     }
+
+     
     
     // Actualizar lista job_queue
 
@@ -307,6 +316,8 @@ void insert_job(struct job *insjob)
 
     free_cores -= active_job[num_active_jobs].num_cores;
 
+   
+
     // Actualizar lista de eventos del job
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -330,6 +341,7 @@ void insert_job(struct job *insjob)
         }
         else
         {
+            
 
             // j = 0;
             //  Comprobamos si la casilla actual es más grande que el tiempo del evento para saber si va antes o despues. Ademas miramos si es la ultima casilla o no
@@ -339,7 +351,7 @@ void insert_job(struct job *insjob)
                 j++;
                 added_time += event_list[j].eventtime;
             }
-
+             
             if (j + 1 < num_event_list)
             {
 
@@ -347,9 +359,7 @@ void insert_job(struct job *insjob)
                 {
                     event_list[k] = event_list[k - 1];
                 }
-                printf("ADEDD:%d\n", added_time);
-                printf("NEXTTTT:%d\n", event_list[j+1].eventtime);
-                printf("MAMAMAMAAMAMMA:%d\n", active_job[num_active_jobs].events[i].time_event - added_time + event_list[j + 1].eventtime);
+               
                 event_list[j].eventtime = active_job[num_active_jobs].events[i].time_event - added_time + event_list[j + 1].eventtime;
                 //added_time += event_list[j].eventtime;
                 event_list[j + 1].eventtime -= event_list[j].eventtime;
@@ -460,8 +470,8 @@ int scheduler()
         print_info();
 
         ciclototal++;
-       // if(ciclototal==98) exit(0);
-        usleep(10000);
+        //if(ciclototal==549) exit(0);
+      //  usleep(10000);
     }
     if(ema==1)
     fclose(fptr);

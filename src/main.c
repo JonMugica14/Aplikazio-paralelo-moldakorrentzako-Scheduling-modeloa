@@ -126,11 +126,11 @@ void read_jobs(int file)
         data = fgets(ch, MAX_LENGTH, ptr);
         int i = 0;
         int j;
-        
+        num_jobs=1;
         while (data != NULL)
         {
             
-            job_queue = (struct job *)realloc(job_queue, (num_jobs + 1) * sizeof(struct job));
+            job_queue = (struct job *)realloc(job_queue, (num_jobs) * sizeof(struct job));
             
             if (job_queue == NULL)
             {
@@ -169,7 +169,7 @@ void read_jobs(int file)
             }
             data = fgets(ch, MAX_LENGTH, ptr);
             i++;
-            num_jobs = i;
+            num_jobs++;
         }
         
     }
@@ -259,6 +259,10 @@ int main(int argc, char *argv[])
     for (int i = 0; i < num_jobs; i++)
     {
         free(job_queue[i].events);
+    }
+
+     for (int i = 0; i < num_jobs; i++)
+    { free(active_job[i].cores);
     }
     free(job_queue);
 
