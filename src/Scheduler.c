@@ -5,7 +5,7 @@
 #include <string.h>
 #include "../include/variables.h"
 #include "../include/Scheduler.h"
-#include "../include/Cores.h"
+
 
 struct job *job;
 void print_info();

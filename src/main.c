@@ -6,7 +6,7 @@
 #include <string.h>
 #include "../include/variables.h"
 #include "../include/Scheduler.h"
-#include "../include/Cores.h"
+
 
 #define MAX_LENGTH 512
 
